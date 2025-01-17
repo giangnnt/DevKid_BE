@@ -1,4 +1,5 @@
-﻿using DevKid.src.Application.Dto.ResponseDtos;
+﻿using DevKid.src.Application.Dto.ChapterDtos;
+using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Domain.Entities;
 
 namespace DevKid.src.Domain.IService
@@ -7,8 +8,8 @@ namespace DevKid.src.Domain.IService
     {
         Task<ResponseDto> GetAllChapters();
         Task<ResponseDto> GetChapterById(Guid id);
-        Task<ResponseDto> AddChapter(Chapter chapter);
-        Task<ResponseDto> UpdateChapter(Chapter chapter);
+        Task<ResponseDto> AddChapter(ChapterCreateDto chapter);
+        Task<ResponseDto> UpdateChapter(Guid id, ChapterUpdateDto chapter);
         Task<ResponseDto> DeleteChapter(Guid id);
     }
 }

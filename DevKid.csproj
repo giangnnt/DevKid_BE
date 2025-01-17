@@ -27,11 +27,9 @@
     <Folder Include="src\Application\Constant\" />
     <Folder Include="src\Application\Core\" />
     <Folder Include="src\Application\Middleware\" />
-    <Folder Include="src\Application\Service\" />
     <Folder Include="src\Domain\IRepository\" />
     <Folder Include="src\Domain\IService\" />
     <Folder Include="src\Infrastructure\Cache\" />
-    <Folder Include="src\Infrastructure\Repository\" />
   </ItemGroup>
 
 </Project>

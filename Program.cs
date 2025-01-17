@@ -28,11 +28,12 @@ builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IChapterService, ChapterService>();
 // Repositories
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<IChapterRepo, ChapterRepo>();
 builder.Services.AddScoped<ILessonRepo, LessonRepo>();
-//builder.Services.AddScoped<IMaterialRepo, MaterialRepo>();
+builder.Services.AddScoped<IMaterialRepo, MaterialRepo>();
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 

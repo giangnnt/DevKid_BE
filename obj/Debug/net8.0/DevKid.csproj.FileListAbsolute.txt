@@ -279,4 +279,3 @@ C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\DevKid.pdb
 C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\DevKid.genruntimeconfig.cache
 C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\ref\DevKid.dll
 C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\DevKid.sourcelink.json
-C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

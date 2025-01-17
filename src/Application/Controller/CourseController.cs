@@ -33,10 +33,10 @@ namespace DevKid.src.Application.Controller
             var response = await _courseService.AddCourse(course);
             return StatusCode(response.StatusCode, response);
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateCourse([FromBody] CourseUpdateDto course)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCourse(Guid id, CourseUpdateDto course)
         {
-            var response = await _courseService.UpdateCourse(course);
+            var response = await _courseService.UpdateCourse(id, course);
             return StatusCode(response.StatusCode, response);
         }
         [HttpDelete("{id}")]

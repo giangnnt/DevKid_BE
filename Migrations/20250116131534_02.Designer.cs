@@ -4,6 +4,7 @@ using DevKid.src.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevKid.Migrations
 {
     [DbContext(typeof(DevKidContext))]
-    partial class DevKidContextModelSnapshot : ModelSnapshot
+    [Migration("20250116131534_02")]
+    partial class _02
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,8 +65,6 @@ namespace DevKid.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
 
                     b.HasIndex("StudentId");
 
@@ -344,12 +345,6 @@ namespace DevKid.Migrations
 
             modelBuilder.Entity("DevKid.src.Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("DevKid.src.Domain.Entities.Lesson", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DevKid.src.Domain.Entities.Student", null)
                         .WithMany("Comments")
                         .HasForeignKey("StudentId")
@@ -489,8 +484,6 @@ namespace DevKid.Migrations
 
             modelBuilder.Entity("DevKid.src.Domain.Entities.Lesson", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Materials");
                 });
 

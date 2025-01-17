@@ -142,12 +142,13 @@ namespace DevKid.src.Application.Service
             }
         }
 
-        public async Task<ResponseDto> UpdateCourse(CourseUpdateDto course)
+        public async Task<ResponseDto> UpdateCourse(Guid id, CourseUpdateDto course)
         {
             var response = new ResponseDto();
             try
             {
-                var mappedCourse = _mapper.Map<Course>(course);
+                var courseToUpdate = await _courseRepo.GetCourseById(id);
+                var mappedCourse = _mapper.Map(course, courseToUpdate);
                 var result = await _courseRepo.UpdateCourse(mappedCourse);
                 if (result)
                 {

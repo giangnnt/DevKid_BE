@@ -3,6 +3,10 @@ using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Logging;
 using DevKid.src.Infrastructure.Context;
+using DevKid.src.Domain.IService;
+using DevKid.src.Application.Service;
+using DevKid.src.Domain.IRepository;
+using DevKid.src.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 // Create a logger
@@ -23,7 +27,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<ICourseService, CourseService>();
 // Repositories
+builder.Services.AddScoped<ICourseRepo, CourseRepo>();
+builder.Services.AddScoped<IChapterRepo, ChapterRepo>();
+builder.Services.AddScoped<ILessonRepo, LessonRepo>();
+//builder.Services.AddScoped<IMaterialRepo, MaterialRepo>();
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 

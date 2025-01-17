@@ -9,7 +9,7 @@ namespace DevKid.src.Domain.IService
         Task<ResponseDto> GetAllCourses();
         Task<ResponseDto> GetCourseById(Guid id);
         Task<ResponseDto> AddCourse(CourseCreateDto course);
-        Task<ResponseDto> UpdateCourse(CourseUpdateDto course);
+        Task<ResponseDto> UpdateCourse(Guid id, CourseUpdateDto course);
         Task<ResponseDto> DeleteCourse(Guid id);
     }
 }

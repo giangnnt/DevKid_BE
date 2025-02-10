@@ -1,6 +1,5 @@
 ﻿
 name: CI/CD
-#(test)
 
 on:
   push:

@@ -28,6 +28,15 @@ jobs:
 
       # - name: Validate firebase.json
       #   run: cat firebase.json
+      - name: Debug Secret
+        run: |
+            if [[ -z "$MY_SECRET" ]]; then
+            echo "❌ MY_SECRET is not set!"
+            else
+            echo "✅ MY_SECRET is set."
+            fi
+        env:
+            MY_SECRET: ${{ secrets.DOCKER_USERNAME }}
 
       - name: Build Docker Image
         run: |

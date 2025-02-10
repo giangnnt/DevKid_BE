@@ -279,3 +279,4 @@ C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\refint\DevKid.dll
 C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\DevKid.pdb
 C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\DevKid.genruntimeconfig.cache
 C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\obj\Debug\net8.0\ref\DevKid.dll
+C:\Users\GIANG\Documents\WORKSPACE\DEV\DevKid\bin\Debug\net8.0\appsettings.Production.json

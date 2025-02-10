@@ -1,10 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Logging;
 using DevKid.src.Infrastructure.Context;
-using DevKid.src.Domain.IService;
-using DevKid.src.Application.Service;
 using DevKid.src.Domain.IRepository;
 using DevKid.src.Infrastructure.Repository;
 
@@ -17,7 +12,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowOrigins",
         builder =>
         {
-            builder.WithOrigins("http://127.0.0.1:5173", "http://localhost:5173", "https://localhost:8080", "https://127.0.0.1:8080", "http://localhost:5000", "http://127.0.0.1:5000")
+            builder.WithOrigins("http://127.0.0.1:5173", "http://localhost:5173", "https://localhost:8080", "https://127.0.0.1:8080")
                    .AllowAnyHeader()
                    .AllowAnyMethod()
                    .AllowCredentials();
@@ -27,8 +22,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddScoped<ICourseService, CourseService>();
-builder.Services.AddScoped<IChapterService, ChapterService>();
 // Repositories
 builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<IChapterRepo, ChapterRepo>();

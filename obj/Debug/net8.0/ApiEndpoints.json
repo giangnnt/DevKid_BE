@@ -1,5 +1,84 @@
 [
   {
+    "ContainingType": "DevKid.src.Application.Controller.ChapterController",
+    "Method": "GetAllChapters",
+    "RelativePath": "api/chapters",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DevKid.src.Application.Controller.ChapterController",
+    "Method": "AddChapter",
+    "RelativePath": "api/chapters",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "chapter",
+        "Type": "DevKid.src.Application.Dto.ChapterDtos.ChapterCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DevKid.src.Application.Controller.ChapterController",
+    "Method": "GetChapterById",
+    "RelativePath": "api/chapters/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DevKid.src.Application.Controller.ChapterController",
+    "Method": "UpdateChapter",
+    "RelativePath": "api/chapters/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "chapter",
+        "Type": "DevKid.src.Application.Dto.ChapterDtos.ChapterUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DevKid.src.Application.Controller.ChapterController",
+    "Method": "DeleteChapter",
+    "RelativePath": "api/chapters/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "DevKid.src.Application.Controller.CourseController",
     "Method": "GetAllCourses",
     "RelativePath": "api/courses",
@@ -27,22 +106,6 @@
   },
   {
     "ContainingType": "DevKid.src.Application.Controller.CourseController",
-    "Method": "UpdateCourse",
-    "RelativePath": "api/courses",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "course",
-        "Type": "DevKid.src.Application.Dto.CourseDtos.CourseUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "DevKid.src.Application.Controller.CourseController",
     "Method": "GetCourseById",
     "RelativePath": "api/courses/{id}",
     "HttpMethod": "GET",
@@ -52,6 +115,27 @@
       {
         "Name": "id",
         "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DevKid.src.Application.Controller.CourseController",
+    "Method": "UpdateCourse",
+    "RelativePath": "api/courses/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "course",
+        "Type": "DevKid.src.Application.Dto.CourseDtos.CourseUpdateDto",
         "IsRequired": true
       }
     ],

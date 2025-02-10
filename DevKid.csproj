@@ -28,8 +28,11 @@
     <Folder Include="src\Application\Core\" />
     <Folder Include="src\Application\Middleware\" />
     <Folder Include="src\Domain\IRepository\" />
-    <Folder Include="src\Domain\IService\" />
     <Folder Include="src\Infrastructure\Cache\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".github\workflows\ci-cd.yml" />
   </ItemGroup>
 
 </Project>

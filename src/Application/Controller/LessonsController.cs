@@ -1,42 +1,46 @@
 ﻿using AutoMapper;
-using DevKid.src.Application.Dto.CourseDtos;
+using DevKid.src.Application.Dto.LessonDtos;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 namespace DevKid.src.Application.Controller
 {
     [Produces("application/json")]
-    [Route("api/courses")]
+    [Route("api/lessons")]
     [ApiController]
-    public class CourseController : ControllerBase
+    public class LessonsController : ControllerBase
     {
-        private readonly ICourseRepo _courseRepo;
+        private readonly ILessonRepo _lessonRepo;
         private readonly IMapper _mapper;
-        public CourseController(ICourseRepo courseRepo, IMapper mapper)
+        private readonly IChapterRepo _chapterRepo;
+        public LessonsController(ILessonRepo lessonRepo, IMapper mapper, IChapterRepo chapterRepo)
         {
-            _courseRepo = courseRepo;
+            _lessonRepo = lessonRepo;
             _mapper = mapper;
+            _chapterRepo = chapterRepo;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllCourses()
+        public async Task<IActionResult> GetAllLessons()
         {
             var response = new ResponseDto();
             try
             {
-                var courses = await _courseRepo.GetAllCourses();
-                var mappedCourses = _mapper.Map<IEnumerable<CourseDto>>(courses);
-                if (mappedCourses != null && mappedCourses.Count() > 0)
+                var lessons = await _lessonRepo.GetAllLessons();
+                var mappedLessons = _mapper.Map<IEnumerable<LessonDto>>(lessons);
+                if (mappedLessons != null && mappedLessons.Count() > 0)
                 {
-                    response.Message = "Courses fetched successfully";
-                    response.Result = new ResultDto { Data = mappedCourses };
+                    response.Message = "Lessons fetched successfully";
+                    response.Result = new ResultDto { Data = mappedLessons };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "No courses found";
+                    response.Message = "No lessons found";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -49,23 +53,23 @@ namespace DevKid.src.Application.Controller
             }
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCourseById(Guid id)
+        public async Task<IActionResult> GetLessonById(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var course = await _courseRepo.GetCourseById(id);
-                var mappedCourse = _mapper.Map<CourseDto>(course);
-                if (mappedCourse != null)
+                var lesson = await _lessonRepo.GetLessonById(id);
+                var mappedLesson = _mapper.Map<LessonDto>(lesson);
+                if (mappedLesson != null)
                 {
-                    response.Message = "Course fetched successfully";
-                    response.Result = new ResultDto { Data = mappedCourse };
+                    response.Message = "Lesson fetched successfully";
+                    response.Result = new ResultDto { Data = mappedLesson };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Course not found";
+                    response.Message = "Lesson not found";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -78,22 +82,23 @@ namespace DevKid.src.Application.Controller
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AddCourse([FromBody] CourseCreateDto course)
+        public async Task<IActionResult> CreateLesson([FromBody] LessonCreateDto lessonCreateDto)
         {
             var response = new ResponseDto();
             try
             {
-                var mappedCourse = _mapper.Map<Course>(course);
-                var result = await _courseRepo.AddCourse(mappedCourse);
+                var chapter = await _chapterRepo.GetChapterById(lessonCreateDto.ChapterId);
+                var lesson = _mapper.Map<Lesson>(lessonCreateDto);
+                var result = await _lessonRepo.AddLesson(lesson);
                 if (result)
                 {
-                    response.Message = "Course added successfully";
+                    response.Message = "Lesson added successfully";
                     response.IsSuccess = true;
-                    return Ok(response);
+                    return Created("", response);
                 }
                 else
                 {
-                    response.Message = "Course not added";
+                    response.Message = "Lesson not added";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -106,23 +111,23 @@ namespace DevKid.src.Application.Controller
             }
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCourse(Guid id, CourseUpdateDto course)
+        public async Task<IActionResult> UpdateLesson(Guid id, [FromBody] LessonUpdateDto lesson)
         {
             var response = new ResponseDto();
             try
             {
-                var courseToUpdate = await _courseRepo.GetCourseById(id);
-                var mappedCourse = _mapper.Map(course, courseToUpdate);
-                var result = await _courseRepo.UpdateCourse(mappedCourse);
+                var lessonToUpdate = await _lessonRepo.GetLessonById(id);
+                var mappedLesson = _mapper.Map(lesson, lessonToUpdate);
+                var result = await _lessonRepo.UpdateLesson(mappedLesson);
                 if (result)
                 {
-                    response.Message = "Course updated successfully";
+                    response.Message = "Lesson updated successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Course not updated";
+                    response.Message = "Lesson not updated";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -135,21 +140,21 @@ namespace DevKid.src.Application.Controller
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCourse(Guid id)
+        public async Task<IActionResult> DeleteLesson(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var result = await _courseRepo.DeleteCourse(id);
+                var result = await _lessonRepo.DeleteLesson(id);
                 if (result)
                 {
-                    response.Message = "Course deleted successfully";
+                    response.Message = "Lesson deleted successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Course not deleted";
+                    response.Message = "Lesson not deleted";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

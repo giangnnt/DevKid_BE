@@ -10,12 +10,12 @@ namespace DevKid.src.Application.Controller
     [Produces("application/json")]
     [Route("api/chapters")]
     [ApiController]
-    public class ChapterController : ControllerBase
+    public class ChaptersController : ControllerBase
     {
         private readonly IChapterRepo _chapterRepo;
         private readonly ICourseRepo _courseRepo;
         private readonly IMapper _mapper;
-        public ChapterController(IChapterRepo chapterRepo, IMapper mapper, ICourseRepo courseRepo)
+        public ChaptersController(IChapterRepo chapterRepo, IMapper mapper, ICourseRepo courseRepo)
         {
             _chapterRepo = chapterRepo;
             _mapper = mapper;

@@ -1,46 +1,53 @@
-﻿using AutoMapper;
-using DevKid.src.Application.Dto.LessonDtos;
-using DevKid.src.Application.Dto.ResponseDtos;
-using DevKid.src.Domain.Entities;
-using DevKid.src.Domain.IRepository;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using DevKid.src.Domain.Entities;
+using DevKid.src.Infrastructure.Context;
+using DevKid.src.Infrastructure.Repository;
+using DevKid.src.Domain.IRepository;
+using AutoMapper;
+using DevKid.src.Application.Dto.ResponseDtos;
 
 namespace DevKid.src.Application.Controller
 {
-    [Produces("application/json")]
-    [Route("api/lessons")]
+    [Route("api/users")]
     [ApiController]
-    public class LessonController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly ILessonRepo _lessonRepo;
+        private readonly IUserRepo _userRepo;
         private readonly IMapper _mapper;
-        private readonly IChapterRepo _chapterRepo;
-        public LessonController(ILessonRepo lessonRepo, IMapper mapper, IChapterRepo chapterRepo)
+
+        public UsersController(IUserRepo userRepo, IMapper mapper)
         {
-            _lessonRepo = lessonRepo;
             _mapper = mapper;
-            _chapterRepo = chapterRepo;
+            _userRepo = userRepo;
         }
+
+        // GET: api/Users
         [HttpGet]
-        public async Task<IActionResult> GetAllLessons()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             var response = new ResponseDto();
             try
             {
-                var lessons = await _lessonRepo.GetAllLessons();
-                var mappedLessons = _mapper.Map<IEnumerable<LessonDto>>(lessons);
-                if (mappedLessons != null && mappedLessons.Count() > 0)
+                var users = await _userRepo.GetUsers();
+                if (users != null)
                 {
-                    response.Message = "Lessons fetched successfully";
-                    response.Result = new ResultDto { Data = mappedLessons };
+                    response.Message = "Users fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<IEnumerable<User>>(users)
+                    };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "No lessons found";
+                    response.Message = "Users not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -52,24 +59,28 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetLessonById(Guid id)
+        public async Task<ActionResult<User>> GetUser(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var lesson = await _lessonRepo.GetLessonById(id);
-                var mappedLesson = _mapper.Map<LessonDto>(lesson);
-                if (mappedLesson != null)
+                var user = await _userRepo.GetUser(id);
+                if (user != null)
                 {
-                    response.Message = "Lesson fetched successfully";
-                    response.Result = new ResultDto { Data = mappedLesson };
+                    response.Message = "User fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<User>(user)
+                    };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Lesson not found";
+                    response.Message = "User not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -81,53 +92,27 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateLesson([FromBody] LessonCreateDto lessonCreateDto)
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var chapter = await _chapterRepo.GetChapterById(lessonCreateDto.ChapterId);
-                var lesson = _mapper.Map<Lesson>(lessonCreateDto);
-                var result = await _lessonRepo.AddLesson(lesson);
-                if (result)
-                {
-                    response.Message = "Lesson added successfully";
-                    response.IsSuccess = true;
-                    return Created("", response);
-                }
-                else
-                {
-                    response.Message = "Lesson not added";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
+
+        // PUT: api/Users/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateLesson(Guid id, [FromBody] LessonUpdateDto lesson)
+        public async Task<IActionResult> PutUser(Guid id, User user)
         {
             var response = new ResponseDto();
             try
             {
-                var lessonToUpdate = await _lessonRepo.GetLessonById(id);
-                var mappedLesson = _mapper.Map(lesson, lessonToUpdate);
-                var result = await _lessonRepo.UpdateLesson(mappedLesson);
+                var userToUpdate = await _userRepo.GetUser(id);
+                var mappedUser = _mapper.Map(user, userToUpdate);
+                var result = await _userRepo.UpdateUser(mappedUser);
                 if (result)
                 {
-                    response.Message = "Lesson updated successfully";
+                    response.Message = "User updated successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Lesson not updated";
+                    response.Message = "User not updated";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -139,22 +124,54 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLesson(Guid id)
+
+        // POST: api/Users
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<User>> PostUser(User user)
         {
             var response = new ResponseDto();
             try
             {
-                var result = await _lessonRepo.DeleteLesson(id);
+                var result = await _userRepo.AddUser(user);
                 if (result)
                 {
-                    response.Message = "Lesson deleted successfully";
+                    response.Message = "User added successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Lesson not deleted";
+                    response.Message = "User not added";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+        // DELETE: api/Users/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var result = await _userRepo.DeleteUser(id);
+                if (result)
+                {
+                    response.Message = "User deleted successfully";
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "User not deleted";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

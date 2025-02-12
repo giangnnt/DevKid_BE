@@ -11,7 +11,7 @@ using DevKid.src.Infrastructure.Repository;
 using DevKid.src.Domain.IRepository;
 using DevKid.src.Application.Dto.ResponseDtos;
 using AutoMapper;
-using DevKid.src.Application.Dto.MaterialDtos;
+using DevKid.src.Application.Dto;
 
 namespace DevKid.src.Application.Controller
 {
@@ -99,7 +99,7 @@ namespace DevKid.src.Application.Controller
         // PUT: api/Materials/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMaterial(Guid id, Material material)
+        public async Task<IActionResult> PutMaterial(Guid id, MaterialUpdateDto material)
         {
             var response = new ResponseDto();
             try
@@ -131,15 +131,15 @@ namespace DevKid.src.Application.Controller
         // POST: api/Materials
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Material>> PostMaterial(Material material)
+        public async Task<ActionResult<Material>> PostMaterial(MaterialCreateDto material)
         {
             var response = new ResponseDto();
             try
             {
                 var lesson = await _lessonRepo.GetLessonById(material.LessonId);
                 var mappedMaterial = _mapper.Map<Material>(material);
-                material.Lesson = lesson;
-                var result = await _materialRepo.AddMaterial(material);
+                mappedMaterial.Lesson = lesson;
+                var result = await _materialRepo.AddMaterial(mappedMaterial);
                 if (result)
                 {
                     response.Message = "Material added successfully";

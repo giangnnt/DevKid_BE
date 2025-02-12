@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
 
-namespace DevKid.src.Application.Dto.LessonDtos
+namespace DevKid.src.Application.Dto
 {
     public class LessonDto
     {
@@ -11,6 +11,17 @@ namespace DevKid.src.Application.Dto.LessonDtos
         public Guid ChapterId { get; set; }
         public List<Material> Materials { get; set; } = new();
         public List<Comment> Comments { get; set; } = new();
+    }
+    public class LessonCreateDto
+    {
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+        public Guid ChapterId { get; set; }
+    }
+    public class LessonUpdateDto
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
     }
     public class LessonProfile : Profile
     {

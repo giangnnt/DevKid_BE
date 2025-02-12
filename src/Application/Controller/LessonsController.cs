@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DevKid.src.Application.Dto.LessonDtos;
+using DevKid.src.Application.Dto;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Infrastructure.Context;
-using DevKid.src.Infrastructure.Repository;
 using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
@@ -15,40 +14,45 @@ using DevKid.src.Application.Dto;
 
 namespace DevKid.src.Application.Controller
 {
-    [Route("api/users")]
+    [Produces("application/json")]
+    [Route("api/comments")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class CommentsController : ControllerBase
     {
-        private readonly IUserRepo _userRepo;
+        private readonly ICommentRepo _commentRepo;
         private readonly IMapper _mapper;
+        private readonly IUserRepo _userRepo;
+        private readonly ILessonRepo _lessonRepo;
 
-        public UsersController(IUserRepo userRepo, IMapper mapper)
+        public CommentsController(ICommentRepo commentRepo, IMapper mapper, IUserRepo userRepo, ILessonRepo lessonRepo)
         {
+            _commentRepo = commentRepo;
             _mapper = mapper;
             _userRepo = userRepo;
+            _lessonRepo = lessonRepo;
         }
 
-        // GET: api/Users
+        // GET: api/Comments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
             var response = new ResponseDto();
             try
             {
-                var users = await _userRepo.GetUsers();
-                if (users != null)
+                var comments = await _commentRepo.GetComments();
+                if (comments != null)
                 {
-                    response.Message = "Users fetched successfully";
+                    response.Message = "Comments fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<IEnumerable<User>>(users)
+                        Data = _mapper.Map<IEnumerable<CommentDto>>(comments)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Users not fetched";
+                    response.Message = "Comments not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -61,27 +65,27 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // GET: api/Users/5
+        // GET: api/Comments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ActionResult<Comment>> GetComment(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var user = await _userRepo.GetUser(id);
-                if (user != null)
+                var comment = await _commentRepo.GetComment(id);
+                if (comment != null)
                 {
-                    response.Message = "User fetched successfully";
+                    response.Message = "Comment fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<User>(user)
+                        Data = _mapper.Map<CommentDto>(comment)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not fetched";
+                    response.Message = "Comment not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -94,26 +98,26 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // PUT: api/Users/5
+        // PUT: api/Comments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UserUpdateDto user)
+        public async Task<IActionResult> PutComment(Guid id, CommentUpdateDto comment)
         {
             var response = new ResponseDto();
             try
             {
-                var userToUpdate = await _userRepo.GetUser(id);
-                var mappedUser = _mapper.Map(user, userToUpdate);
-                var result = await _userRepo.UpdateUser(mappedUser);
+                var commentToUpdate = await _commentRepo.GetComment(id);
+                var mappedComment = _mapper.Map<Comment>(comment);
+                var result = await _commentRepo.UpdateComment(mappedComment);
                 if (result)
                 {
-                    response.Message = "User updated successfully";
+                    response.Message = "Comment updated successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not updated";
+                    response.Message = "Comment not updated";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -126,25 +130,27 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // POST: api/Users
+        // POST: api/Comments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserCreateDto user)
+        public async Task<ActionResult<Comment>> PostComment(CommentCreateDto comment)
         {
             var response = new ResponseDto();
             try
             {
-                var mappedUser = _mapper.Map<User>(user);
-                var result = await _userRepo.AddUser(mappedUser);
+                var student = await _userRepo.GetUser(comment.StudentId);
+                var lesson = await _lessonRepo.GetLessonById(comment.LessonId);
+                var mappedComment = _mapper.Map<Comment>(comment);
+                var result = await _commentRepo.AddComment(mappedComment);
                 if (result)
                 {
-                    response.Message = "User added successfully";
+                    response.Message = "Comment added successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not added";
+                    response.Message = "Comment not added";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -157,23 +163,23 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/Comments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteComment(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var result = await _userRepo.DeleteUser(id);
+                var result = await _commentRepo.DeleteComment(id);
                 if (result)
                 {
-                    response.Message = "User deleted successfully";
+                    response.Message = "Comment deleted successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not deleted";
+                    response.Message = "Comment not deleted";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

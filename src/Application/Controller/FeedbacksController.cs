@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Infrastructure.Context;
-using DevKid.src.Infrastructure.Repository;
 using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
@@ -15,40 +14,45 @@ using DevKid.src.Application.Dto;
 
 namespace DevKid.src.Application.Controller
 {
-    [Route("api/users")]
+    [Produces("application/json")]
+    [Route("api/feedbacks")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class FeedbacksController : ControllerBase
     {
-        private readonly IUserRepo _userRepo;
+        private readonly IFeedbackRepo _feedbackRepo;
         private readonly IMapper _mapper;
+        private readonly IUserRepo _userRepo;
+        private readonly ICourseRepo _courseRepo;
 
-        public UsersController(IUserRepo userRepo, IMapper mapper)
+        public FeedbacksController(IFeedbackRepo feedbackRepo, IMapper mapper, IUserRepo userRepo, ICourseRepo courseRepo)
         {
+            _feedbackRepo = feedbackRepo;
             _mapper = mapper;
             _userRepo = userRepo;
+            _courseRepo = courseRepo;
         }
 
-        // GET: api/Users
+        // GET: api/Feedbacks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacks()
         {
             var response = new ResponseDto();
             try
             {
-                var users = await _userRepo.GetUsers();
-                if (users != null)
+                var feedbacks = await _feedbackRepo.GetFeedbacks();
+                if (feedbacks != null)
                 {
-                    response.Message = "Users fetched successfully";
+                    response.Message = "Feedbacks fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<IEnumerable<User>>(users)
+                        Data = _mapper.Map<IEnumerable<Feedback>>(feedbacks)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Users not fetched";
+                    response.Message = "Feedbacks not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -61,27 +65,27 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // GET: api/Users/5
+        // GET: api/Feedbacks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ActionResult<Feedback>> GetFeedback(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var user = await _userRepo.GetUser(id);
-                if (user != null)
+                var feedback = await _feedbackRepo.GetFeedback(id);
+                if (feedback != null)
                 {
-                    response.Message = "User fetched successfully";
+                    response.Message = "Feedback fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<User>(user)
+                        Data = _mapper.Map<Feedback>(feedback)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not fetched";
+                    response.Message = "Feedback not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -94,26 +98,25 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // PUT: api/Users/5
+        // PUT: api/Feedbacks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UserUpdateDto user)
+        public async Task<IActionResult> PutFeedback(Guid id, FeedbackUpdateDto feedback)
         {
             var response = new ResponseDto();
             try
             {
-                var userToUpdate = await _userRepo.GetUser(id);
-                var mappedUser = _mapper.Map(user, userToUpdate);
-                var result = await _userRepo.UpdateUser(mappedUser);
+                var mappedFeedback = _mapper.Map<Feedback>(feedback);
+                var result = await _feedbackRepo.UpdateFeedback(mappedFeedback);
                 if (result)
                 {
-                    response.Message = "User updated successfully";
+                    response.Message = "Feedback updated successfully";
                     response.IsSuccess = true;
-                    return Ok(response);
+                    return Created("", response);
                 }
                 else
                 {
-                    response.Message = "User not updated";
+                    response.Message = "Feedback not updated";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -126,25 +129,27 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // POST: api/Users
+        // POST: api/Feedbacks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserCreateDto user)
+        public async Task<ActionResult<Feedback>> PostFeedback(FeedbackCreateDto feedback)
         {
             var response = new ResponseDto();
             try
             {
-                var mappedUser = _mapper.Map<User>(user);
-                var result = await _userRepo.AddUser(mappedUser);
+                var course = await _courseRepo.GetCourseById(feedback.CourseId);
+                var student = await _userRepo.GetUser(feedback.StudentId);
+                var mappedFeedback = _mapper.Map<Feedback>(feedback);
+                var result = await _feedbackRepo.AddFeedback(mappedFeedback);
                 if (result)
                 {
-                    response.Message = "User added successfully";
+                    response.Message = "Feedback added successfully";
                     response.IsSuccess = true;
-                    return Ok(response);
+                    return Created("", response);
                 }
                 else
                 {
-                    response.Message = "User not added";
+                    response.Message = "Feedback not added";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -157,23 +162,23 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/Feedbacks/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteFeedback(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var result = await _userRepo.DeleteUser(id);
+                var result = await _feedbackRepo.DeleteFeedback(id);
                 if (result)
                 {
-                    response.Message = "User deleted successfully";
+                    response.Message = "Feedback deleted successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not deleted";
+                    response.Message = "Feedback not deleted";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

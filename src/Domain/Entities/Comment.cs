@@ -9,6 +9,7 @@ namespace DevKid.src.Domain.Entities
         public string Content { get; set; } = null!;
         public Guid StudentId { get; set; }
         public Guid LessonId { get; set; }
-
+        public Student Student { get; set; } = null!;
+        public Lesson Lesson { get; set; } = null!;
     }
 }

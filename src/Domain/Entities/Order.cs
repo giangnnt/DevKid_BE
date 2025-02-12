@@ -9,5 +9,13 @@
         public Student Student { get; set; } = null!;
         public Course Course { get; set; } = null!;
         public Payment? Payment { get; set; }
+        public enum StatusEnum
+        {
+            Pending,
+            Completed,
+            Failed,
+            Cancelled
+        }
+        public StatusEnum Status;
     }
 }

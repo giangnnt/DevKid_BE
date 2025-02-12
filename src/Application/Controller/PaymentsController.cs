@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Infrastructure.Context;
-using DevKid.src.Infrastructure.Repository;
 using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
@@ -15,40 +14,42 @@ using DevKid.src.Application.Dto;
 
 namespace DevKid.src.Application.Controller
 {
-    [Route("api/users")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class PaymentsController : ControllerBase
     {
-        private readonly IUserRepo _userRepo;
+        private readonly IPaymentRepo _paymentRepo;
         private readonly IMapper _mapper;
+        private readonly IOrderRepo _orderRepo;
 
-        public UsersController(IUserRepo userRepo, IMapper mapper)
+        public PaymentsController(IPaymentRepo paymentRepo, IMapper mapper, IOrderRepo orderRepo)
         {
+            _paymentRepo = paymentRepo;
             _mapper = mapper;
-            _userRepo = userRepo;
+            _orderRepo = orderRepo;
         }
 
-        // GET: api/Users
+        // GET: api/Payments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
         {
             var response = new ResponseDto();
             try
             {
-                var users = await _userRepo.GetUsers();
-                if (users != null)
+                var payments = await _paymentRepo.GetPayments();
+                if (payments != null)
                 {
-                    response.Message = "Users fetched successfully";
+                    response.Message = "Payments fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<IEnumerable<User>>(users)
+                        Data = _mapper.Map<IEnumerable<Payment>>(payments)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "Users not fetched";
+                    response.Message = "Payments not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -57,31 +58,31 @@ namespace DevKid.src.Application.Controller
             {
                 response.Message = ex.Message;
                 response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
         }
 
-        // GET: api/Users/5
+        // GET: api/Payments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ActionResult<Payment>> GetPayment(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var user = await _userRepo.GetUser(id);
-                if (user != null)
+                var payment = await _paymentRepo.GetPayment(id);
+                if (payment != null)
                 {
-                    response.Message = "User fetched successfully";
+                    response.Message = "Payment fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<User>(user)
+                        Data = _mapper.Map<Payment>(payment)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not fetched";
+                    response.Message = "Payment not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -90,61 +91,30 @@ namespace DevKid.src.Application.Controller
             {
                 response.Message = ex.Message;
                 response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UserUpdateDto user)
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var userToUpdate = await _userRepo.GetUser(id);
-                var mappedUser = _mapper.Map(user, userToUpdate);
-                var result = await _userRepo.UpdateUser(mappedUser);
-                if (result)
-                {
-                    response.Message = "User updated successfully";
-                    response.IsSuccess = true;
-                    return Ok(response);
-                }
-                else
-                {
-                    response.Message = "User not updated";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
-
-        // POST: api/Users
+        // POST: api/Payments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserCreateDto user)
+        public async Task<ActionResult<Payment>> PostPayment(PaymentCreateDto payment)
         {
             var response = new ResponseDto();
             try
             {
-                var mappedUser = _mapper.Map<User>(user);
-                var result = await _userRepo.AddUser(mappedUser);
+                var order = await _orderRepo.GetOrder(payment.OrderId);
+                var mappedPayment = _mapper.Map<Payment>(payment);
+                var result = await _paymentRepo.AddPayment(mappedPayment);
                 if (result)
                 {
-                    response.Message = "User added successfully";
+                    response.Message = "Payment added successfully";
                     response.IsSuccess = true;
-                    return Ok(response);
+                    return Created("", response);
                 }
                 else
                 {
-                    response.Message = "User not added";
+                    response.Message = "Payment not added";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
@@ -157,23 +127,23 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/Payments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeletePayment(Guid id)
         {
             var response = new ResponseDto();
             try
             {
-                var result = await _userRepo.DeleteUser(id);
+                var result = await _paymentRepo.DeletePayment(id);
                 if (result)
                 {
-                    response.Message = "User deleted successfully";
+                    response.Message = "Payment deleted successfully";
                     response.IsSuccess = true;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Message = "User not deleted";
+                    response.Message = "Payment not deleted";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

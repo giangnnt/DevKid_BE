@@ -29,7 +29,7 @@ namespace DevKid.src.Infrastructure.Repository
         public async Task<User> GetUser(Guid id)
         {
             return await _context.Users
-                .FirstOrDefaultAsync(x => x.id == id) ?? throw new Exception("User not found");
+                .FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("User not found");
         }
 
         public async Task<IEnumerable<User>> GetUsers()

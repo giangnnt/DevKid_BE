@@ -15,6 +15,7 @@ using DevKid.src.Application.Dto;
 
 namespace DevKid.src.Application.Controller
 {
+    [Produces("application/json")]
     [Route("api/materials")]
     [ApiController]
     public class MaterialsController : ControllerBase

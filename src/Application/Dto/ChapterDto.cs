@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DevKid.src.Application.Dto
 {
@@ -13,8 +14,10 @@ namespace DevKid.src.Application.Dto
     }
     public class ChapterCreateDto
     {
+        [Required]
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
+        [Required]
         public Guid CourseId { get; set; }
     }
     public class ChapterUpdateDto

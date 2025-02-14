@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 using static DevKid.src.Domain.Entities.Payment;
 
 namespace DevKid.src.Application.Dto
@@ -17,7 +18,10 @@ namespace DevKid.src.Application.Dto
     }
     public class PaymentCreateDto
     {
+        [Required]
         public Guid OrderId { get; set; }
+        [Required]
+        [Range(1, float.MaxValue)]
         public float Amount { get; set; }
     }
     public class PaymentProfile : Profile

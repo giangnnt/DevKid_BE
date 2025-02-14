@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using static DevKid.src.Domain.Entities.Material;
 
 namespace DevKid.src.Application.Dto
@@ -15,10 +17,14 @@ namespace DevKid.src.Application.Dto
     }
     public class MaterialCreateDto
     {
+        [Required]
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
+        [Required]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public MaterialType Type { get; set; }
         public string? Url { get; set; }
+        [Required]
         public Guid LessonId { get; set; }
     }
     public class MaterialUpdateDto

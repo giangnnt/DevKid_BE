@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 using static DevKid.src.Domain.Entities.Order;
 
 namespace DevKid.src.Application.Dto
@@ -14,8 +15,12 @@ namespace DevKid.src.Application.Dto
     }
     public class OrderCreateDto
     {
+        [Required]
         public Guid StudentId { get; set; }
+        [Required]
         public Guid CourseId { get; set; }
+        [Required]
+        [Range(1, float.MaxValue)]
         public float Price { get; set; }
     }
     public class OrderProfile : Profile

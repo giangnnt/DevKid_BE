@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DevKid.src.Application.Dto
 {
@@ -12,8 +13,11 @@ namespace DevKid.src.Application.Dto
     }
     public class CommentCreateDto
     {
+        [Required]
         public string Content { get; set; } = null!;
+        [Required]
         public Guid StudentId { get; set; }
+        [Required]
         public Guid LessonId { get; set; }
     }
     public class CommentUpdateDto

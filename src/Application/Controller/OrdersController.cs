@@ -13,7 +13,8 @@ using DevKid.src.Application.Dto.ResponseDtos;
 
 namespace DevKid.src.Application.Controller
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/orders")]
     [ApiController]
     public class OrdersController : ControllerBase
     {

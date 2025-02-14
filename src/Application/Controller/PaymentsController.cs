@@ -14,7 +14,8 @@ using DevKid.src.Application.Dto;
 
 namespace DevKid.src.Application.Controller
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/payments")]
     [ApiController]
     public class PaymentsController : ControllerBase
     {

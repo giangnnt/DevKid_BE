@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace DevKid.src.Application.Dto
 {
@@ -14,16 +15,21 @@ namespace DevKid.src.Application.Dto
     }
     public class CourseCreateDto
     {
+        [Required]
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
+        [Required]
+        [Range(1000, float.MaxValue)]
         public float Price { get; set; }
     }
     public class CourseUpdateDto
     {
+
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
+        [Range(1000, float.MaxValue)]
         public float? Price { get; set; }
     }
     public class CourseProfile : Profile

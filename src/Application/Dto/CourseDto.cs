@@ -11,7 +11,7 @@ namespace DevKid.src.Application.Dto
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public float Price { get; set; }
-        public List<Chapter> Chapters { get; set; } = new();
+        public List<ChapterDto> Chapters { get; set; } = new();
     }
     public class CourseCreateDto
     {
@@ -20,7 +20,7 @@ namespace DevKid.src.Application.Dto
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         [Required]
-        [Range(1000, float.MaxValue)]
+        [Range(2000, 1000000)]
         public float Price { get; set; }
     }
     public class CourseUpdateDto
@@ -29,7 +29,7 @@ namespace DevKid.src.Application.Dto
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
-        [Range(1000, float.MaxValue)]
+        [Range(2000, float.MaxValue)]
         public float? Price { get; set; }
     }
     public class CourseProfile : Profile

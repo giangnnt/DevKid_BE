@@ -10,7 +10,7 @@ namespace DevKid.src.Application.Dto
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public Guid CourseId { get; set; }
-        public List<Lesson> Lessons { get; set; } = new();
+        public List<LessonDto> Lessons { get; set; } = new();
     }
     public class ChapterCreateDto
     {

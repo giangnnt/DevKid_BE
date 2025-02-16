@@ -4,6 +4,8 @@ using DevKid.src.Domain.IRepository;
 using DevKid.src.Infrastructure.Repository;
 using DevKid.src.Application.Controller;
 using DevKid.src.Domain.Entities;
+using DevKid.src.Application.ExternalService;
+using static DevKid.src.Application.ExternalService.IPayOSService;
 
 var builder = WebApplication.CreateBuilder(args);
 // Create a logger
@@ -30,6 +32,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<IPayOSService, PayOSService>();
 
 
 // Repositories
@@ -37,6 +40,12 @@ builder.Services.AddScoped<ICourseRepo, CourseRepo>();
 builder.Services.AddScoped<IChapterRepo, ChapterRepo>();
 builder.Services.AddScoped<ILessonRepo, LessonRepo>();
 builder.Services.AddScoped<IMaterialRepo, MaterialRepo>();
+builder.Services.AddScoped<IOrderRepo, OrderRepo>();
+builder.Services.AddScoped<IFeedbackRepo, FeedbackRepo>();
+builder.Services.AddScoped<ICommentRepo, CommentRepo>();
+builder.Services.AddScoped<IMaterialRepo, MaterialRepo>();
+builder.Services.AddScoped<IPaymentRepo, PaymentRepo>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 
 // Database
@@ -68,6 +77,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddEndpointsApiExplorer();
 var app = builder.Build();
+logger.LogInformation("Current Environment: {Environment}", app.Environment.EnvironmentName);
+
 
 app.UseSwagger();
 

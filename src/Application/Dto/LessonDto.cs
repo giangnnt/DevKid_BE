@@ -10,8 +10,8 @@ namespace DevKid.src.Application.Dto
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public Guid ChapterId { get; set; }
-        public List<Material> Materials { get; set; } = new();
-        public List<Comment> Comments { get; set; } = new();
+        public List<MaterialDto> Materials { get; set; } = new();
+        public List<CommentDto> Comments { get; set; } = new();
     }
     public class LessonCreateDto
     {

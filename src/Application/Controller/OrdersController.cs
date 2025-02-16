@@ -10,6 +10,7 @@ using DevKid.src.Infrastructure.Context;
 using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
+using DevKid.src.Application.ExternalService;
 
 namespace DevKid.src.Application.Controller
 {
@@ -20,11 +21,15 @@ namespace DevKid.src.Application.Controller
     {
         private readonly IOrderRepo _orderRepo;
         private readonly IMapper _mapper;
+        private readonly IPayOSService _payOSService;
+        private readonly ICourseRepo _courseRepo;
 
-        public OrdersController(IOrderRepo orderRepo, IMapper mapper)
+        public OrdersController(IOrderRepo orderRepo, IMapper mapper, IPayOSService payOSService, ICourseRepo courseRepo)
         {
             _mapper = mapper;
             _orderRepo = orderRepo;
+            _payOSService = payOSService;
+            _courseRepo = courseRepo;
         }
 
         // GET: api/Orders
@@ -94,12 +99,38 @@ namespace DevKid.src.Application.Controller
 
         }
 
-        // POST: api/Orders
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        [HttpPost("payment-url")]
+        public async Task<ActionResult> CreatePaymentUrl([FromQuery]Guid courseId)
         {
-            throw new NotImplementedException();
+            var response = new ResponseDto();
+            try
+            {
+                var course = await _courseRepo.GetCourseById(courseId);
+                var paymentUrl = await _payOSService.GeneratePaymentUrl(course);
+                if (paymentUrl != null)
+                {
+                    response.Message = "Payment url generated successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = paymentUrl
+                    };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Payment url not generated";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return BadRequest(response);
+            }
         }
 
         // DELETE: api/Orders/5

@@ -16,10 +16,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5173",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "CLIENT_ID": "054d5443-d0c1-4043-8fce-1a2e3a0dc801",
-        "API_KEY": "a15f8642-2333-48cf-8911-16d10e65b36d",
-        "CHECKSUM_KEY": "c85f3e786d70034c538c4315f0f4a2ead14832754e65c567715f3b78aa8981ae"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "https": {
@@ -30,9 +27,9 @@
       "applicationUrl": "https://localhost:5173",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "CLIENT_ID": "054d5443-d0c1-4043-8fce-1a2e3a0dc801",
-        "API_KEY": "a15f8642-2333-48cf-8911-16d10e65b36d",
-        "CHECKSUM_KEY": "c85f3e786d70034c538c4315f0f4a2ead14832754e65c567715f3b78aa8981ae"
+        "CLIENT_ID": "4fccefd6-7c26-473e-98b0-e6afac8933e3",
+        "API_KEY": "e93830e9-2031-4567-bc45-d1c419c99d5e",
+        "CHECKSUM_KEY": "b76592bbf1c4ddee71846c10a6da2ed7c78851db8ad7a544801a96758333324b"
       }
     },
     "IIS Express": {

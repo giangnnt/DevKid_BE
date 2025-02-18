@@ -11,6 +11,7 @@ using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.ExternalService;
+using DevKid.src.Application.Dto;
 
 namespace DevKid.src.Application.Controller
 {
@@ -23,18 +24,20 @@ namespace DevKid.src.Application.Controller
         private readonly IMapper _mapper;
         private readonly IPayOSService _payOSService;
         private readonly ICourseRepo _courseRepo;
+        private readonly IPaymentRepo _paymentRepo;
 
-        public OrdersController(IOrderRepo orderRepo, IMapper mapper, IPayOSService payOSService, ICourseRepo courseRepo)
+        public OrdersController(IOrderRepo orderRepo, IMapper mapper, IPayOSService payOSService, ICourseRepo courseRepo, IPaymentRepo paymentRepo)
         {
             _mapper = mapper;
             _orderRepo = orderRepo;
             _payOSService = payOSService;
             _courseRepo = courseRepo;
+            _paymentRepo = paymentRepo;
         }
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public async Task<ActionResult> GetOrders()
         {
             var response = new ResponseDto();
             try
@@ -45,7 +48,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Orders fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<IEnumerable<Order>>(orders)
+                        Data = _mapper.Map<IEnumerable<OrderDto>>(orders)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
@@ -67,7 +70,7 @@ namespace DevKid.src.Application.Controller
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(Guid id)
+        public async Task<ActionResult> GetOrder(long id)
         {
             var response = new ResponseDto();
             try
@@ -78,7 +81,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Order fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<Order>(order)
+                        Data = _mapper.Map<OrderDto>(order)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
@@ -100,7 +103,7 @@ namespace DevKid.src.Application.Controller
         }
 
         [HttpPost("payment-url")]
-        public async Task<ActionResult> CreatePaymentUrl([FromQuery]Guid courseId)
+        public async Task<ActionResult> CreatePaymentUrl([FromQuery] Guid courseId)
         {
             var response = new ResponseDto();
             try
@@ -132,10 +135,74 @@ namespace DevKid.src.Application.Controller
                 return BadRequest(response);
             }
         }
+        [HttpPost("payos-webhook")]
+        public async Task<ActionResult> PayOSWebhook([FromBody] PayOSWebhookModel webhookData)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                if (webhookData == null)
+                {
+                    return BadRequest("Invalid webhook payload");
+                }
+                if(webhookData.Data.OrderCode == 123)
+                {
+                    return Ok(new { success = true });
+                }
+                var isValid = _payOSService.ValidateSignature(webhookData);
+                if (isValid)
+                {
+                    var order = await _orderRepo.GetOrder(webhookData.Data.OrderCode);
+                    order.Status = webhookData.Success switch
+                    {
+                        true => Order.StatusEnum.Completed,
+                        false => Order.StatusEnum.Failed,
+                    };
+                    var payment = new Payment
+                    {
+                        OrderId = order.Id,
+                        Amount = webhookData.Data.Amount,
+                        Currency = webhookData.Data.Currency,
+                        PaymentMethod = "PayOS",
+                        Status = webhookData.Success switch
+                        {
+                            true => Payment.StatusEnum.Completed,
+                            false => Payment.StatusEnum.Failed,
+                        },
+                        CreateAt = DateTime.UtcNow,
+
+                    };
+                    var result1 = await _orderRepo.UpdateOrder(order);
+                    var result2 = await _paymentRepo.AddPayment(payment);
+                    if (result1 && result2)
+                    {
+                        response.Message = "Order updated successfully";
+                        response.IsSuccess = true;
+                        return Ok(new { success = true });
+                    }
+                    else
+                    {
+                        response.Message = "Order not updated";
+                        response.IsSuccess = false;
+                        return BadRequest(response);
+                    }
+                }
+                else
+                {
+                    return BadRequest("Invalid signature");
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return BadRequest(response);
+            }
+        }
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(Guid id)
+        public async Task<IActionResult> DeleteOrder(long id)
         {
             var response = new ResponseDto();
             try

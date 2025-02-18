@@ -31,7 +31,7 @@ namespace DevKid.src.Application.Controller
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult> GetUsers()
         {
             var response = new ResponseDto();
             try
@@ -42,7 +42,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Users fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<IEnumerable<User>>(users)
+                        Data = _mapper.Map<IEnumerable<UserDto>>(users)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
@@ -64,7 +64,7 @@ namespace DevKid.src.Application.Controller
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ActionResult> GetUser(Guid id)
         {
             var response = new ResponseDto();
             try
@@ -75,7 +75,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "User fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<User>(user)
+                        Data = _mapper.Map<UserDto>(user)
                     };
                     response.IsSuccess = true;
                     return Ok(response);

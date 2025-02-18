@@ -3,11 +3,11 @@
     public class Payment
     {
         public Guid Id { get; set; }
-        public Guid OrderId { get; set; }
+        public long OrderId { get; set; }
         public Order Order { get; set; } = null!; 
-        public float Amount { get; set; }
-        public string Currency { get; set; } = "VND";
-        public string PaymentMethod { set; get; } = "VNPay";
+        public int Amount { get; set; }
+        public string Currency { get; set; } = null!;
+        public string PaymentMethod { set; get; } = null!;
         public enum StatusEnum
         {
             Pending,

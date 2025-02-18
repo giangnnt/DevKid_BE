@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using static DevKid.src.Domain.Entities.Order;
 
 namespace DevKid.src.Application.Dto
 {
     public class OrderDto
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public Guid StudentId { get; set; }
         public Guid CourseId { get; set; }
-        public float Price { get; set; }
-        public StatusEnum Status;
+        public int Price { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public StatusEnum Status { get; set; }
     }
     public class OrderCreateDto
     {
@@ -20,8 +22,8 @@ namespace DevKid.src.Application.Dto
         [Required]
         public Guid CourseId { get; set; }
         [Required]
-        [Range(1, float.MaxValue)]
-        public float Price { get; set; }
+        [Range(1, int.MaxValue)]
+        public int Price { get; set; }
     }
     public class OrderProfile : Profile
     {

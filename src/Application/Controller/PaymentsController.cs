@@ -43,7 +43,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Payments fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<IEnumerable<Payment>>(payments)
+                        Data = _mapper.Map<IEnumerable<PaymentDto>>(payments)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
@@ -65,7 +65,7 @@ namespace DevKid.src.Application.Controller
 
         // GET: api/Payments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Payment>> GetPayment(Guid id)
+        public async Task<ActionResult> GetPayment(Guid id)
         {
             var response = new ResponseDto();
             try
@@ -76,7 +76,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Payment fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<Payment>(payment)
+                        Data = _mapper.Map<PaymentDto>(payment)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
@@ -99,7 +99,7 @@ namespace DevKid.src.Application.Controller
         // POST: api/Payments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(PaymentCreateDto payment)
+        public async Task<ActionResult> PostPayment(PaymentCreateDto payment)
         {
             var response = new ResponseDto();
             try

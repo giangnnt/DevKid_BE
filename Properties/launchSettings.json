@@ -29,8 +29,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "CLIENT_ID": "054d5443-d0c1-4043-8fce-1a2e3a0dc801",
         "API_KEY": "a15f8642-2333-48cf-8911-16d10e65b36d",
-        "CHECKSUM_KEY": "c85f3e786d70034c538c4315f0f4a2ead14832754e65c567715f3b78aa8981ae",
-        "JWT_SECRET": "8a21f416ac3c7de71de084e5190bb322456f5739eff177aeb5be84af1a70bc59"
+        "CHECKSUM_KEY": "c85f3e786d70034c538c4315f0f4a2ead14832754e65c567715f3b78aa8981ae"
       }
     },
     "IIS Express": {

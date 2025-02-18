@@ -44,6 +44,10 @@ jobs:
 
     steps:
       - name: SSH and deploy
+        env:
+            API_KEY: ${{ secrets.API_KEY }}
+            CHECKSUM_KEY: ${{ secrets.CHECKSUM_KEY }}
+            CLIENT_ID: ${{ secrets.CLIENT_ID }}
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}

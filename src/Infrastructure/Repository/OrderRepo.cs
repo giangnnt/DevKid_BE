@@ -19,14 +19,14 @@ namespace DevKid.src.Infrastructure.Repository
             return result > 0;
         }
 
-        public async Task<bool> DeleteOrder(Guid id)
+        public async Task<bool> DeleteOrder(long id)
         {
             _context.Orders.Remove(_context.Orders.Find(id) ?? throw new Exception("Order not found"));
             var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public async Task<Order> GetOrder(Guid id)
+        public async Task<Order> GetOrder(long id)
         {
             return await _context.Orders
                 .FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Order not found");

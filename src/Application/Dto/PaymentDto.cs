@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using static DevKid.src.Domain.Entities.Payment;
 
 namespace DevKid.src.Application.Dto
@@ -8,21 +9,22 @@ namespace DevKid.src.Application.Dto
     public class PaymentDto
     {
         public Guid Id { get; set; }
-        public Guid OrderId { get; set; }
-        public float Amount { get; set; }
+        public long OrderId { get; set; }
+        public int Amount { get; set; }
         public string Currency { get; set; } = null!;
         public string PaymentMethod { set; get; } = null!;
-        public StatusEnum Status;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public StatusEnum Status { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime UpdateAt { get; set; }
     }
     public class PaymentCreateDto
     {
         [Required]
-        public Guid OrderId { get; set; }
+        public long OrderId { get; set; }
         [Required]
-        [Range(1, float.MaxValue)]
-        public float Amount { get; set; }
+        [Range(1, int.MaxValue)]
+        public int Amount { get; set; }
     }
     public class PaymentProfile : Profile
     {

@@ -31,6 +31,44 @@ namespace DevKid.src.Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<StudentCourse>().HasKey(sc => new { sc.StudentId, sc.CourseId });
+            // seed role
+            modelBuilder.Entity<Role>().HasData(
+                new Role
+                {
+                    Id = 1,
+                    Name = "ADMIN"
+                },
+                new Role
+                {
+                    Id = 2,
+                    Name = "TEACHER"
+                },
+                new Role
+                {
+                    Id = 3,
+                    Name = "STUDENT"
+                }
+            );
+            modelBuilder.Entity<Student>().HasData(
+                new Student
+                {
+                    Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                    RoleId = 3,
+                    Password = "123456",
+                    Name = "Nguyen Van A",
+                    Email = "nguyenvana@gmail.com",
+                    DayOfBirth = new DateTime(2000, 1, 1)
+                });
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Id)
+                .ValueGeneratedNever();
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Status)
+                .HasConversion<string>();
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.Status)
+                .HasConversion<string>();
         }
     }
 }

@@ -34,7 +34,7 @@ namespace DevKid.src.Application.Controller
 
         // GET: api/Feedbacks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacks()
+        public async Task<ActionResult> GetFeedbacks()
         {
             var response = new ResponseDto();
             try
@@ -45,7 +45,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Feedbacks fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<IEnumerable<Feedback>>(feedbacks)
+                        Data = _mapper.Map<IEnumerable<FeedbackDto>>(feedbacks)
                     };
                     response.IsSuccess = true;
                     return Ok(response);
@@ -67,7 +67,7 @@ namespace DevKid.src.Application.Controller
 
         // GET: api/Feedbacks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Feedback>> GetFeedback(Guid id)
+        public async Task<ActionResult> GetFeedback(Guid id)
         {
             var response = new ResponseDto();
             try
@@ -78,7 +78,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Feedback fetched successfully";
                     response.Result = new ResultDto
                     {
-                        Data = _mapper.Map<Feedback>(feedback)
+                        Data = _mapper.Map<FeedbackDto>(feedback)
                     };
                     response.IsSuccess = true;
                     return Ok(response);

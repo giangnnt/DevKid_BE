@@ -2,10 +2,11 @@
 using DevKid.src.Infrastructure.Context;
 using DevKid.src.Domain.IRepository;
 using DevKid.src.Infrastructure.Repository;
-using DevKid.src.Application.Controller;
-using DevKid.src.Domain.Entities;
-using DevKid.src.Application.ExternalService;
-using static DevKid.src.Application.ExternalService.IPayOSService;
+using DevKid.src.Application.Service;
+using static DevKid.src.Application.Service.IPayOSService;
+using DevKid.src.Infrastructure.Cache;
+using StackExchange.Redis;
+using DevKid.src.Application.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 // Create a logger
@@ -30,9 +31,15 @@ builder.Services.AddCors(options =>
 
 // Services
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 builder.Services.AddAuthorization();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IPayOSService, PayOSService>();
+builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ICrypto, Crypto>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 // Repositories
@@ -46,9 +53,14 @@ builder.Services.AddScoped<ICommentRepo, CommentRepo>();
 builder.Services.AddScoped<IMaterialRepo, MaterialRepo>();
 builder.Services.AddScoped<IPaymentRepo, PaymentRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<IRoleBaseRepository, RoleBaseRepository>();
 
+// redis configuration
+Console.WriteLine($"Redis connection string: {builder.Configuration.GetConnectionString("RedisConnection")}");
+var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection") ?? throw new InvalidOperationException("Redis connection string is not configured.");
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
 
-// Database
+// SQL config
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 
 builder.Services.AddDbContext<DevKidContext>(options =>

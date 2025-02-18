@@ -3,7 +3,7 @@ using Net.payOS;
 using Net.payOS.Types;
 using System;
 
-namespace DevKid.src.Application.ExternalService
+namespace DevKid.src.Application.Service
 {
     public interface IPayOSService
     {

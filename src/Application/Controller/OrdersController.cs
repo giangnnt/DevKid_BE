@@ -10,7 +10,7 @@ using DevKid.src.Infrastructure.Context;
 using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
-using DevKid.src.Application.ExternalService;
+using DevKid.src.Application.Service;
 
 namespace DevKid.src.Application.Controller
 {

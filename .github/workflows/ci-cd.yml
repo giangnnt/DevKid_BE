@@ -29,14 +29,14 @@ jobs:
         run: echo "${{ secrets.FIREBASE_JSON }}" > firebase.json
 
       - name: Validate firebase.json
-        run: cat firebase.json
+        run: cat firebase.json | jq '.'
 
       - name: Save production.json from secret
         run: echo "${{ secrets.PROD_JSON }}" > appsettings.Production.json
 
       - name: Validate production.json
         run: cat appsettings.Production.json
-      - name: Build Docker Image
+      - name: Build Docker Image | jq '.'
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/devkid_api:latest .
 

@@ -17,15 +17,17 @@ namespace DevKid.src.Application.Service
         public class PayOSService : IPayOSService
         {
             private readonly IOrderRepo _orderRepo;
-            public PayOSService(IOrderRepo orderRepo)
+            private readonly IConfiguration _configuration;
+            public PayOSService(IOrderRepo orderRepo, IConfiguration configuration)
             {
                 _orderRepo = orderRepo;
+                _configuration = configuration;
             }
             public async Task<string> GeneratePaymentUrl(Course course)
             {
-                var clientId = Environment.GetEnvironmentVariable("CLIENT_ID") ?? throw new Exception("client id is null");
-                var apiKet = Environment.GetEnvironmentVariable("API_KEY") ?? throw new Exception("api key is null");
-                var checkSumKey = Environment.GetEnvironmentVariable("CHECKSUM_KEY") ?? throw new Exception("checksum key is null");
+                var clientId = _configuration["PayOS:CLIENT_ID"] ?? throw new Exception("client id is null");
+                var apiKet = _configuration["PayOS:API_KEY"] ?? throw new Exception("api key is null");
+                var checkSumKey = _configuration["PayOS:CHECKSUM_KEY"] ?? throw new Exception("checksum key is null");
                 var payOS = new PayOS(clientId, apiKet, checkSumKey);
                 var paymentLinkRequest = new PaymentData(
                     orderCode: (DateTime.UtcNow.Ticks - 621355968000000000) / 10000000,

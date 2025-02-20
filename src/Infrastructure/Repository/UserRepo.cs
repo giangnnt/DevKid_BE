@@ -34,7 +34,7 @@ namespace DevKid.src.Infrastructure.Repository
 
         public async Task<User> GetUserByEmail(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email) ?? throw new Exception("User not found");
+            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<IEnumerable<User>> GetUsers()

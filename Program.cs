@@ -21,11 +21,21 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowOrigins",
         builder =>
         {
-            builder.WithOrigins("http://127.0.0.1:5173", "http://localhost:5173", "https://localhost:8080", "https://127.0.0.1:8080")
+            builder.WithOrigins("http://127.0.0.1:5173", "http://localhost:5173", "https://localhost:8080", "https://127.0.0.1:8080", "https://localhost:5173", "https://127.0.0.1:5173")
                    .AllowAnyHeader()
                    .AllowAnyMethod()
                    .AllowCredentials();
         });
+});
+
+// Session
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 
@@ -40,6 +50,7 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ICrypto, Crypto>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGCService, GCService>();
 
 
 // Repositories
@@ -112,6 +123,8 @@ app.UseRouting();
 app.UseCors("AllowOrigins");
 
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllers();
 

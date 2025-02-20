@@ -181,13 +181,14 @@ namespace DevKid.src.Application.Service
                 else
                 {
                     var hashedPassword = _crypto.HashPassword(registerDto.Password);
-                    var newUser = new User
+                    var newUser = new Student
                     {
                         Email = registerDto.Email,
                         Password = hashedPassword,
                         Name = registerDto.FullName,
                         Phone = registerDto.PhoneNumber,
-                        RoleId = 4,
+                        IsActive = true,
+                        RoleId = 3,
                     };
                     var result = await _userRepo.AddUser(newUser);
                     if (result)

@@ -41,17 +41,18 @@ namespace DevKid.src.Application.Service
             _config = config;
             PROJECT_ID = _config["GCP:PROJECT_ID"];
             FOLDER = _config["GCP:FOLDER"];
+
             // Initialize the Google Cloud Storage client
             string credentialsPath = "firebase.json"; // Replace with your Service Account Key path
-
             var credentials = GoogleCredential.FromFile(credentialsPath);
             StorageClient = StorageClient.Create(credentials);
             BucketName = PROJECT_ID + ".appspot.com"; // Default Firebase Storage bucket
             FilePrefix = "https://storage.googleapis.com/" + BucketName + "/";
+
             // Initialize the OAuth 2.0 configuration
             client_id = _config["GCP:client_id"];
             client_secret = _config["GCP:client_secret"];
-            redirect_uri = "https://localhost:8080/api/auth/login-google-callback";
+            redirect_uri = _config["GCP:oauth_callback"];
             response_type = _config["GCP:response_type"];
             scope = _config["GCP:scope"];
             _userRepo = userRepo;
@@ -212,7 +213,7 @@ namespace DevKid.src.Application.Service
         }
         public async Task<User> RegisterUser(GoogleUserInfo userInfo)
         {
-            var user = new User
+            var user = new Student
             {
                 Id = Guid.NewGuid(),
                 Email = userInfo.Email,

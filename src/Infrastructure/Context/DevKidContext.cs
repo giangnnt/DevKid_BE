@@ -49,16 +49,21 @@ namespace DevKid.src.Infrastructure.Context
                     Name = "STUDENT"
                 }
             );
-            modelBuilder.Entity<Student>().HasData(
-                new Student
+            modelBuilder.Entity<User>().HasData(
+                new User
                 {
                     Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
-                    RoleId = 3,
-                    Password = "123456",
-                    Name = "Nguyen Van A",
-                    Email = "nguyenvana@gmail.com",
-                    DayOfBirth = new DateTime(2000, 1, 1)
+                    RoleId = 1,
+                    Password = "$2a$11$YiI2CDlblzUkSC2lPOfdk.Y3NHROl1J02rEELG3DOczvG3qvqF9VC",
+                    Name = "Admin",
+                    Email = "admin@gmail.com",
+                    Phone = "0123456789",
+                    IsActive = true
                 });
+            modelBuilder.Entity<User>()
+                .HasDiscriminator<string>("UserType")
+                .HasValue<User>("User")
+                .HasValue<Student>("Student");
 
             modelBuilder.Entity<Order>()
                 .Property(o => o.Id)

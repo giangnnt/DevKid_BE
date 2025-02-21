@@ -7,6 +7,7 @@ using static DevKid.src.Application.Service.IPayOSService;
 using DevKid.src.Infrastructure.Cache;
 using StackExchange.Redis;
 using DevKid.src.Application.Core;
+using Microsoft.AspNetCore.OData;
 
 var builder = WebApplication.CreateBuilder(args);
 // Create a logger
@@ -40,7 +41,10 @@ builder.Services.AddSession(options =>
 
 
 // Services
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddOData(options =>
+{
+    options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(100);
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddAuthorization();

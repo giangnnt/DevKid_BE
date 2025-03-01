@@ -13,6 +13,7 @@ using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Service;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Core;
 
 namespace DevKid.src.Application.Controller
 {
@@ -104,13 +105,18 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost("payment-url")]
-        public async Task<ActionResult> CreatePaymentUrl([FromQuery] Guid courseId)
+        public async Task<ActionResult> CreatePaymentUrl([FromQuery] Guid courseId, HttpContext context)
         {
             var response = new ResponseDto();
             try
             {
+                var payload = context.Items["payload"] as Payload;
+                if (payload == null)
+                {
+                    return BadRequest("Invalid token");
+                }
                 var course = await _courseRepo.GetCourseById(courseId);
-                var paymentUrl = await _payOSService.GeneratePaymentUrl(course);
+                var paymentUrl = await _payOSService.GeneratePaymentUrl(course, payload.UserId);
                 if (paymentUrl != null)
                 {
                     response.Message = "Payment url generated successfully";

@@ -12,18 +12,20 @@ namespace DevKid.src.Application.Service
 {
     public interface IPayOSService
     {
-        public Task<string> GeneratePaymentUrl(Course course);
+        public Task<string> GeneratePaymentUrl(Course course, Guid StudentId);
         public bool ValidateSignature(PayOSWebhookModel webhookData);
         public class PayOSService : IPayOSService
         {
             private readonly IOrderRepo _orderRepo;
             private readonly IConfiguration _configuration;
-            public PayOSService(IOrderRepo orderRepo, IConfiguration configuration)
+            private readonly IUserRepo _userRepo;
+            public PayOSService(IOrderRepo orderRepo, IConfiguration configuration, IUserRepo userRepo)
             {
                 _orderRepo = orderRepo;
                 _configuration = configuration;
+                _userRepo = userRepo;
             }
-            public async Task<string> GeneratePaymentUrl(Course course)
+            public async Task<string> GeneratePaymentUrl(Course course, Guid StudentId)
             {
                 var clientId = _configuration["PayOS:CLIENT_ID"] ?? throw new Exception("client id is null");
                 var apiKet = _configuration["PayOS:API_KEY"] ?? throw new Exception("api key is null");
@@ -39,10 +41,15 @@ namespace DevKid.src.Application.Service
                     );
                 var response = await payOS.createPaymentLink(paymentLinkRequest);
                 // create pending order
+                var user = await _userRepo.GetUser(StudentId);
+                if (user == null)
+                {
+                    throw new Exception("Student not found");
+                }
                 var order = new Order
                 {
                     Id = response.orderCode,
-                    StudentId = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                    StudentId = user.Id,
                     CourseId = course.Id,
                     Price = course.Price,
                     Status = Order.StatusEnum.Pending

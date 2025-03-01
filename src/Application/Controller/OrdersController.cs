@@ -105,15 +105,17 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost("payment-url")]
-        public async Task<ActionResult> CreatePaymentUrl([FromQuery] Guid courseId, HttpContext context)
+        public async Task<ActionResult> CreatePaymentUrl([FromQuery] Guid courseId)
         {
             var response = new ResponseDto();
             try
             {
-                var payload = context.Items["payload"] as Payload;
+                var payload = HttpContext.Items["payload"] as Payload;
                 if (payload == null)
                 {
-                    return BadRequest("Invalid token");
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return Unauthorized(response);
                 }
                 var course = await _courseRepo.GetCourseById(courseId);
                 var paymentUrl = await _payOSService.GeneratePaymentUrl(course, payload.UserId);

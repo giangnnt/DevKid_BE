@@ -133,13 +133,13 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost]
-        public async Task<ActionResult<Feedback>> PostFeedback(FeedbackCreateDto feedback, HttpContext context)
+        public async Task<ActionResult<Feedback>> PostFeedback(FeedbackCreateDto feedback)
         {
             
             var response = new ResponseDto();
             try
             {
-                var payload = context.Items["payload"] as Payload;
+                var payload = HttpContext.Items["payload"] as Payload;
                 // check if payload is null
                 if (payload == null)
                 {

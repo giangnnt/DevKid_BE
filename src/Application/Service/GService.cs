@@ -46,7 +46,7 @@ namespace DevKid.src.Application.Service
             string credentialsPath = "firebase.json"; // Replace with your Service Account Key path
             var credentials = GoogleCredential.FromFile(credentialsPath);
             StorageClient = StorageClient.Create(credentials);
-            BucketName = PROJECT_ID + ".appspot.com"; // Default Firebase Storage bucket
+            BucketName = PROJECT_ID + ".firebasestorage.app"; // Default Firebase Storage bucket
             FilePrefix = "https://storage.googleapis.com/" + BucketName + "/";
 
             // Initialize the OAuth 2.0 configuration

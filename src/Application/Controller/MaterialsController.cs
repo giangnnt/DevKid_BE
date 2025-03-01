@@ -12,6 +12,7 @@ using DevKid.src.Domain.IRepository;
 using DevKid.src.Application.Dto.ResponseDtos;
 using AutoMapper;
 using DevKid.src.Application.Dto;
+using DevKid.src.Application.Service;
 
 namespace DevKid.src.Application.Controller
 {
@@ -20,85 +21,102 @@ namespace DevKid.src.Application.Controller
     [ApiController]
     public class MaterialsController : ControllerBase
     {
+        private readonly IMediaService _mediaService;
+        private readonly ILessonRepo _lessonRepo;
         private readonly IMaterialRepo _materialRepo;
         private readonly IMapper _mapper;
-        private readonly ILessonRepo _lessonRepo;
 
-        public MaterialsController(IMaterialRepo materialRepo, IMapper mapper, ILessonRepo lessonRepo)
+        public MaterialsController(IMediaService mediaService, ILessonRepo lessonRepo, IMaterialRepo materialRepo, IMapper mapper)
         {
+            _mediaService = mediaService;
+            _lessonRepo = lessonRepo;
             _materialRepo = materialRepo;
             _mapper = mapper;
-            _lessonRepo = lessonRepo;
         }
 
-        // GET: api/Materials
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Material>>> GetMaterials()
+        [HttpPost("upload-media")]
+        public async Task<IActionResult> UploadMedia(IFormFile file, string type)
         {
-            var response = new ResponseDto();
-            try
+            var response = await _mediaService.UploadMedia(file, type);
+            if (response.IsSuccess)
             {
-                var materials = await _materialRepo.GetAllMaterials();
-                if (materials != null)
-                {
-                    response.Message = "Materials fetched successfully";
-                    response.Result = new ResultDto
-                    {
-                        Data = _mapper.Map<IEnumerable<MaterialDto>>(materials)
-                    };
-                    response.IsSuccess = true;
-                    return Ok(response);
-                }
-                else
-                {
-                    response.Message = "Materials not fetched";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
+                return Ok(response);
             }
-            catch (Exception ex)
+            else
             {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
         }
 
-        // GET: api/Materials/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Material>> GetMaterial(Guid id)
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var material = await _materialRepo.GetMaterialById(id);
-                if (material != null)
-                {
-                    response.Message = "Material fetched successfully";
-                    response.Result = new ResultDto
-                    {
-                        Data = _mapper.Map<MaterialDto>(material)
-                    };
-                    response.IsSuccess = true;
-                    return Ok(response);
-                }
-                else
-                {
-                    response.Message = "Material not fetched";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
 
-        // PUT: api/Materials/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //// GET: api/Materials
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Material>>> GetMaterials()
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var materials = await _materialRepo.GetAllMaterials();
+        //        if (materials != null)
+        //        {
+        //            response.Message = "Materials fetched successfully";
+        //            response.Result = new ResultDto
+        //            {
+        //                Data = _mapper.Map<IEnumerable<MaterialDto>>(materials)
+        //            };
+        //            response.IsSuccess = true;
+        //            return Ok(response);
+        //        }
+        //        else
+        //        {
+        //            response.Message = "Materials not fetched";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.IsSuccess = false;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
+
+        //// GET: api/Materials/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Material>> GetMaterial(Guid id)
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var material = await _materialRepo.GetMaterialById(id);
+        //        if (material != null)
+        //        {
+        //            response.Message = "Material fetched successfully";
+        //            response.Result = new ResultDto
+        //            {
+        //                Data = _mapper.Map<MaterialDto>(material)
+        //            };
+        //            response.IsSuccess = true;
+        //            return Ok(response);
+        //        }
+        //        else
+        //        {
+        //            response.Message = "Material not fetched";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.IsSuccess = false;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
+
+        //// PUT: api/Materials/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMaterial(Guid id, MaterialUpdateDto material)
         {
@@ -129,8 +147,8 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // POST: api/Materials
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //// POST: api/Materials
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Material>> PostMaterial(MaterialCreateDto material)
         {

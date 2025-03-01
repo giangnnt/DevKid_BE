@@ -13,8 +13,9 @@ namespace DevKid.src.Domain.Entities
         public string? Description { get; set; }
         public enum MaterialType
         {
+            Image,
             Video,
-            Document,
+            Doc,
             Link
         }
         public MaterialType Type { get; set; }

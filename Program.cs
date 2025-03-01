@@ -8,6 +8,7 @@ using DevKid.src.Infrastructure.Cache;
 using StackExchange.Redis;
 using DevKid.src.Application.Core;
 using Microsoft.AspNetCore.OData;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 // Create a logger
@@ -55,6 +56,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ICrypto, Crypto>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGCService, GCService>();
+builder.Services.AddScoped<IMediaService, MediaService>();
 
 
 // Repositories
@@ -100,6 +102,26 @@ foreach (var provider in configurationRoot.Providers)
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "DevKid API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+      {
+          new OpenApiSecurityScheme
+          {
+              Reference = new OpenApiReference
+              {
+                  Type = ReferenceType.SecurityScheme,
+                  Id = "Bearer"
+              }
+          },
+          new string[] {}
+      }
+    });
 });
 
 builder.Services.AddEndpointsApiExplorer();

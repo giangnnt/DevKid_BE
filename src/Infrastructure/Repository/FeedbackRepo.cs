@@ -36,6 +36,17 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.Feedbacks.ToListAsync();
         }
 
+        public async Task<IEnumerable<Feedback>> GetFeedbacksByCourseId(Guid courseId)
+        {
+            return await _context.Feedbacks.Where(f => f.CourseId == courseId).ToListAsync();
+        }
+
+        public async Task<bool> HaveUserFeedbackOnCourse(Guid courseId, Guid userId)
+        {
+            var result = await _context.Feedbacks.AnyAsync(f => f.CourseId == courseId && f.StudentId == userId);
+            return result;
+        }
+
         public async Task<bool> UpdateFeedback(Feedback feedback)
         {
             _context.Feedbacks.Update(feedback);

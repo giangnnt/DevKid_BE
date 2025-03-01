@@ -12,6 +12,7 @@ using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Service;
 using DevKid.src.Application.Dto;
+using DevKid.src.Application.Middleware;
 
 namespace DevKid.src.Application.Controller
 {
@@ -35,7 +36,7 @@ namespace DevKid.src.Application.Controller
             _paymentRepo = paymentRepo;
         }
 
-        // GET: api/Orders
+        [Protected]
         [HttpGet]
         public async Task<ActionResult> GetOrders()
         {
@@ -68,7 +69,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // GET: api/Orders/5
+        [Protected]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetOrder(long id)
         {
@@ -101,7 +102,7 @@ namespace DevKid.src.Application.Controller
             }
 
         }
-
+        [Protected]
         [HttpPost("payment-url")]
         public async Task<ActionResult> CreatePaymentUrl([FromQuery] Guid courseId)
         {
@@ -200,7 +201,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // DELETE: api/Orders/5
+        [Protected]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(long id)
         {

@@ -13,6 +13,7 @@ using DevKid.src.Application.Dto.ResponseDtos;
 using AutoMapper;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Service;
+using DevKid.src.Application.Middleware;
 
 namespace DevKid.src.Application.Controller
 {
@@ -33,7 +34,7 @@ namespace DevKid.src.Application.Controller
             _materialRepo = materialRepo;
             _mapper = mapper;
         }
-
+        [Protected]
         [HttpPost("upload-media")]
         public async Task<IActionResult> UploadMedia(IFormFile file, string type)
         {
@@ -115,8 +116,7 @@ namespace DevKid.src.Application.Controller
         //    }
         //}
 
-        //// PUT: api/Materials/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMaterial(Guid id, MaterialUpdateDto material)
         {
@@ -147,8 +147,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        //// POST: api/Materials
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPost]
         public async Task<ActionResult<Material>> PostMaterial(MaterialCreateDto material)
         {
@@ -179,6 +178,7 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        [Protected]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMaterial(Guid id)
         {

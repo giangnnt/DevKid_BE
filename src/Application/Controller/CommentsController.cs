@@ -11,6 +11,7 @@ using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
+using DevKid.src.Application.Middleware;
 
 namespace DevKid.src.Application.Controller
 {
@@ -31,7 +32,7 @@ namespace DevKid.src.Application.Controller
             _userRepo = userRepo;
             _lessonRepo = lessonRepo;
         }
-
+        [Protected]
         // GET: api/Comments
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
@@ -64,7 +65,7 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-
+        [Protected]
         // GET: api/Comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(Guid id)
@@ -98,8 +99,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // PUT: api/Comments/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutComment(Guid id, CommentUpdateDto comment)
         {
@@ -130,8 +130,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // POST: api/Comments
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(CommentCreateDto comment)
         {
@@ -163,7 +162,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // DELETE: api/Comments/5
+        [Protected]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(Guid id)
         {

@@ -9,5 +9,7 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddFeedback(Feedback feedback);
         Task<bool> UpdateFeedback(Feedback feedback);
         Task<bool> DeleteFeedback(Guid id);
+        Task<IEnumerable<Feedback>> GetFeedbacksByCourseId(Guid courseId);
+        Task<bool> HaveUserFeedbackOnCourse(Guid courseId, Guid userId);
     }
 }

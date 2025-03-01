@@ -37,6 +37,22 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.Orders.ToListAsync();
         }
 
+        public async Task<bool> HaveUserBoughtCourse(Guid courseId, Guid userId)
+        {
+            var result = await _context.Orders.FirstOrDefaultAsync(o => o.CourseId == courseId && o.StudentId == userId);
+            if (result != null)
+            {
+                if (result.Payment != null)
+                {
+                    if (result.Payment.Status == Payment.StatusEnum.Completed)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public async Task<bool> UpdateOrder(Order order)
         {
             _context.Orders.Update(order);

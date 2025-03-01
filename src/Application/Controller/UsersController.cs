@@ -12,6 +12,7 @@ using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
+using DevKid.src.Application.Middleware;
 
 namespace DevKid.src.Application.Controller
 {
@@ -29,7 +30,7 @@ namespace DevKid.src.Application.Controller
             _userRepo = userRepo;
         }
 
-        // GET: api/Users
+        [Protected]
         [HttpGet]
         public async Task<ActionResult> GetUsers()
         {
@@ -62,7 +63,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // GET: api/Users/5
+        [Protected]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(Guid id)
         {
@@ -95,8 +96,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(Guid id, UserUpdateDto user)
         {
@@ -127,8 +127,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(UserCreateDto user)
         {
@@ -158,7 +157,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // DELETE: api/Users/5
+        [Protected]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {

@@ -9,5 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddOrder(Order order);
         Task<bool> UpdateOrder(Order order);
         Task<bool> DeleteOrder(long id);
+        Task<bool> HaveUserBoughtCourse(Guid courseId, Guid userId);
     }
 }

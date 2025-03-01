@@ -11,6 +11,7 @@ using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
+using DevKid.src.Application.Middleware;
 
 namespace DevKid.src.Application.Controller
 {
@@ -30,7 +31,7 @@ namespace DevKid.src.Application.Controller
             _orderRepo = orderRepo;
         }
 
-        // GET: api/Payments
+        [Protected]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
         {
@@ -63,7 +64,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // GET: api/Payments/5
+        [Protected]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetPayment(Guid id)
         {
@@ -96,39 +97,38 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // POST: api/Payments
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult> PostPayment(PaymentCreateDto payment)
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var order = await _orderRepo.GetOrder(payment.OrderId);
-                var mappedPayment = _mapper.Map<Payment>(payment);
-                var result = await _paymentRepo.AddPayment(mappedPayment);
-                if (result)
-                {
-                    response.Message = "Payment added successfully";
-                    response.IsSuccess = true;
-                    return Created("", response);
-                }
-                else
-                {
-                    response.Message = "Payment not added";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
+        //[Protected]
+        //[HttpPost]
+        //public async Task<ActionResult> PostPayment(PaymentCreateDto payment)
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var order = await _orderRepo.GetOrder(payment.OrderId);
+        //        var mappedPayment = _mapper.Map<Payment>(payment);
+        //        var result = await _paymentRepo.AddPayment(mappedPayment);
+        //        if (result)
+        //        {
+        //            response.Message = "Payment added successfully";
+        //            response.IsSuccess = true;
+        //            return Created("", response);
+        //        }
+        //        else
+        //        {
+        //            response.Message = "Payment not added";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.IsSuccess = false;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
 
-        // DELETE: api/Payments/5
+        [Protected]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePayment(Guid id)
         {

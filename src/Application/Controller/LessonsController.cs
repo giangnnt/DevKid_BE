@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Dto.ResponseDtos;
+using DevKid.src.Application.Middleware;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ namespace DevKid.src.Application.Controller
             _mapper = mapper;
             _chapterRepo = chapterRepo;
         }
+        [Protected]
         [HttpGet]
         public async Task<IActionResult> GetAllLessons()
         {
@@ -52,6 +54,7 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        [Protected]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLessonById(Guid id)
         {
@@ -81,6 +84,7 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        [Protected]
         [HttpPost]
         public async Task<IActionResult> CreateLesson([FromBody] LessonCreateDto lessonCreateDto)
         {
@@ -110,6 +114,7 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        [Protected]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateLesson(Guid id, [FromBody] LessonUpdateDto lesson)
         {
@@ -139,6 +144,7 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        [Protected]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLesson(Guid id)
         {

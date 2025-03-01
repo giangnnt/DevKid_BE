@@ -11,6 +11,8 @@ using DevKid.src.Domain.IRepository;
 using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
+using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Core;
 
 namespace DevKid.src.Application.Controller
 {
@@ -23,47 +25,49 @@ namespace DevKid.src.Application.Controller
         private readonly IMapper _mapper;
         private readonly IUserRepo _userRepo;
         private readonly ICourseRepo _courseRepo;
+        private readonly IOrderRepo _orderRepo;
 
-        public FeedbacksController(IFeedbackRepo feedbackRepo, IMapper mapper, IUserRepo userRepo, ICourseRepo courseRepo)
+        public FeedbacksController(IFeedbackRepo feedbackRepo, IMapper mapper, IUserRepo userRepo, ICourseRepo courseRepo, IOrderRepo orderRepo)
         {
             _feedbackRepo = feedbackRepo;
             _mapper = mapper;
             _userRepo = userRepo;
             _courseRepo = courseRepo;
+            _orderRepo = orderRepo;
         }
 
-        // GET: api/Feedbacks
-        [HttpGet]
-        public async Task<ActionResult> GetFeedbacks()
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var feedbacks = await _feedbackRepo.GetFeedbacks();
-                if (feedbacks != null)
-                {
-                    response.Message = "Feedbacks fetched successfully";
-                    response.Result = new ResultDto
-                    {
-                        Data = _mapper.Map<IEnumerable<FeedbackDto>>(feedbacks)
-                    };
-                    response.IsSuccess = true;
-                    return Ok(response);
-                }
-                else
-                {
-                    response.Message = "Feedbacks not fetched";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
+        //// GET: api/Feedbacks
+        //[HttpGet]
+        //public async Task<ActionResult> GetFeedbacks()
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var feedbacks = await _feedbackRepo.GetFeedbacks();
+        //        if (feedbacks != null)
+        //        {
+        //            response.Message = "Feedbacks fetched successfully";
+        //            response.Result = new ResultDto
+        //            {
+        //                Data = _mapper.Map<IEnumerable<FeedbackDto>>(feedbacks)
+        //            };
+        //            response.IsSuccess = true;
+        //            return Ok(response);
+        //        }
+        //        else
+        //        {
+        //            response.Message = "Feedbacks not fetched";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.IsSuccess = false;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
 
         // GET: api/Feedbacks/5
         [HttpGet("{id}")]
@@ -98,8 +102,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // PUT: api/Feedbacks/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFeedback(Guid id, FeedbackUpdateDto feedback)
         {
@@ -128,18 +131,39 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-
-        // POST: api/Feedbacks
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Protected]
         [HttpPost]
-        public async Task<ActionResult<Feedback>> PostFeedback(FeedbackCreateDto feedback)
+        public async Task<ActionResult<Feedback>> PostFeedback(FeedbackCreateDto feedback, HttpContext context)
         {
+            
             var response = new ResponseDto();
             try
             {
+                var payload = context.Items["payload"] as Payload;
+                // check if payload is null
+                if (payload == null)
+                {
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return Unauthorized(response);
+                }
                 var course = await _courseRepo.GetCourseById(feedback.CourseId);
                 var student = await _userRepo.GetUser(feedback.StudentId);
                 var mappedFeedback = _mapper.Map<Feedback>(feedback);
+                // check if student bought the course
+                if (!await _orderRepo.HaveUserBoughtCourse(course.Id, student.Id))
+                {
+                    response.Message = "You have not bought this course";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+                // check if student already gave feedback
+                if (await _feedbackRepo.HaveUserFeedbackOnCourse(course.Id, student.Id))
+                {
+                    response.Message = "You have already given feedback";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
                 var result = await _feedbackRepo.AddFeedback(mappedFeedback);
                 if (result)
                 {
@@ -162,7 +186,7 @@ namespace DevKid.src.Application.Controller
             }
         }
 
-        // DELETE: api/Feedbacks/5
+        [Protected]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFeedback(Guid id)
         {

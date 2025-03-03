@@ -14,6 +14,7 @@ using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
 using DevKid.src.Application.Constant;
+using DevKid.src.Application.Core;
 
 namespace DevKid.src.Application.Controller
 {
@@ -101,12 +102,28 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpPut("{id}")]
-        [Permission(PermissionSlug.USER_ALL)]
+        [Permission(PermissionSlug.USER_ALL, PermissionSlug.USER_OWN)]
         public async Task<IActionResult> PutUser(Guid id, UserUpdateDto user)
         {
             var response = new ResponseDto();
             try
             {
+                var payload = HttpContext.Items["payload"] as Payload;
+                if (payload == null)
+                {
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return NotFound(response);
+                }
+                if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
+                {
+                    if (payload.UserId != id)
+                    {
+                        response.Message = "You are not authorized to update this user";
+                        response.IsSuccess = false;
+                        return Unauthorized(response);
+                    }
+                }
                 var userToUpdate = await _userRepo.GetUser(id);
                 var mappedUser = _mapper.Map(user, userToUpdate);
                 var result = await _userRepo.UpdateUser(mappedUser);
@@ -180,6 +197,37 @@ namespace DevKid.src.Application.Controller
                 else
                 {
                     response.Message = "User not deleted";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        [Protected]
+        [HttpPut("status")]
+        [Permission(PermissionSlug.USER_ALL)]
+        public async Task<IActionResult> PutUserStatus(Guid id, bool userStatus)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var userToUpdate = await _userRepo.GetUser(id);
+                userToUpdate.IsActive = userStatus;
+                var result = await _userRepo.UpdateUser(userToUpdate);
+                if (result)
+                {
+                    response.Message = "User status updated successfully";
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "User status not updated";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

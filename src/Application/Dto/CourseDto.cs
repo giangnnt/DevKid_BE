@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using static DevKid.src.Domain.Entities.Course;
 
 namespace DevKid.src.Application.Dto
@@ -20,7 +21,7 @@ namespace DevKid.src.Application.Dto
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public int Price { get; set; }
-        [EnumDataType(typeof(CourseStatus))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public CourseStatus Status { get; set; }
         public List<ChapterDto> Chapters { get; set; } = new();
     }

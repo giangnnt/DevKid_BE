@@ -11,7 +11,6 @@ namespace DevKid.src.Application.Dto
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string? AvatarUrl { get; set; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public bool IsActive { get; set; }
     }
     public class UserCreateDto

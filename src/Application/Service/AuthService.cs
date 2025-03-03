@@ -188,6 +188,7 @@ namespace DevKid.src.Application.Service
                         Name = registerDto.FullName,
                         Phone = registerDto.PhoneNumber,
                         IsActive = true,
+                        AvatarUrl = registerDto.AvatarUrl,
                         RoleId = 3,
                     };
                     var result = await _userRepo.AddUser(newUser);

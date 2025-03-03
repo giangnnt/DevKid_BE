@@ -23,5 +23,7 @@ namespace DevKid.src.Application.Dto.AuthDtos
         [StringLength(15, ErrorMessage = "Phone number must be 0-15 characters")]
         [RegularExpression(RegexConst.PHONE_NUMBER, ErrorMessage = "Invalid phone number")]
         public string PhoneNumber { get; set; } = null!;
+
+        public string? AvatarUrl { get; set; }
     }
 }

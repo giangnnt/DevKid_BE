@@ -15,6 +15,7 @@ using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
 using DevKid.src.Application.Constant;
 using DevKid.src.Application.Core;
+using System.Reflection.PortableExecutable;
 
 namespace DevKid.src.Application.Controller
 {
@@ -113,7 +114,7 @@ namespace DevKid.src.Application.Controller
                 {
                     response.Message = "Unauthorized";
                     response.IsSuccess = false;
-                    return NotFound(response);
+                    return Unauthorized(response);
                 }
                 if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
                 {
@@ -228,6 +229,47 @@ namespace DevKid.src.Application.Controller
                 else
                 {
                     response.Message = "User status not updated";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        [Protected]
+        [HttpGet("own")]
+        [Permission(PermissionSlug.USER_OWN, PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW)]
+        public async Task<IActionResult> GetUserOwn()
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var payload = HttpContext.Items["payload"] as Payload;
+                if (payload == null)
+                {
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return Unauthorized(response);
+                }
+                var user = await _userRepo.GetUser(payload.UserId);
+
+                if (user != null)
+                {
+                    response.Message = "User fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<UserDto>(user)
+                    };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "User not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

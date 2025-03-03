@@ -2,6 +2,7 @@
 using DevKid.src.Domain.IRepository;
 using DevKid.src.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.ModelBuilder;
 
 namespace DevKid.src.Infrastructure.Repository
 {
@@ -35,6 +36,13 @@ namespace DevKid.src.Infrastructure.Repository
         public async Task<IEnumerable<Payment>> GetPayments()
         {
             return await _context.Payments.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Payment>> GetPaymentsByUserId(Guid userId)
+        {
+            var orders = await _context.Orders.Where(o => o.StudentId == userId).ToListAsync();
+            var payments = orders.Select(o => o.Payment).Where(p => p != null).Cast<Payment>().ToList();
+            return payments;
         }
 
         public async Task<bool> UpdatePayment(Payment payment)

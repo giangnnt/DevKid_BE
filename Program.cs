@@ -57,6 +57,7 @@ builder.Services.AddScoped<ICrypto, Crypto>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGCService, GCService>();
 builder.Services.AddScoped<IMediaService, MediaService>();
+builder.Services.AddScoped<IBoughtCertificateService, BoughtCertificateService>();
 
 
 // Repositories

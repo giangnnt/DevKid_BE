@@ -9,5 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddComment(Comment comment);
         Task<bool> UpdateComment(Comment comment);
         Task<bool> DeleteComment(Guid id);
+        Task<IEnumerable<Comment>> GetCommentsByLessonId(Guid lessonId);
     }
 }

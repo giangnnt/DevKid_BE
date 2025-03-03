@@ -37,6 +37,11 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.Materials.FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Material not found");
         }
 
+        public async Task<IEnumerable<Material>> GetMaterialsByLessonId(Guid lessonId)
+        {
+            return await _context.Materials.Where(x => x.LessonId == lessonId).ToListAsync();
+        }
+
         public async Task<bool> UpdateMaterial(Material material)
         {
             _context.Materials.Update(material);

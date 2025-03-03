@@ -1,4 +1,5 @@
-﻿using DevKid.src.Domain.Entities;
+﻿using DevKid.src.Application.Constant;
+using DevKid.src.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +31,35 @@ namespace DevKid.src.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<StudentCourse>().HasKey(sc => new { sc.StudentId, sc.CourseId });
+            // seed permission
+            modelBuilder.Entity<Permission>().HasData(
+                new Permission { Slug = PermissionSlug.CHAPTER_ALL, Name = "Chapter All" },
+                new Permission { Slug = PermissionSlug.CHAPTER_VIEW, Name = "Chapter View" },
+                new Permission { Slug = PermissionSlug.COMMENT_ALL, Name = "Comment All" },
+                new Permission { Slug = PermissionSlug.COMMENT_OWN, Name = "Comment Own" },
+                new Permission { Slug = PermissionSlug.COMMNET_VIEW, Name = "Comment View" },
+                new Permission { Slug = PermissionSlug.COURSE_ALL, Name = "Course All" },
+                new Permission { Slug = PermissionSlug.COURSE_VIEW, Name = "Course View" },
+                new Permission { Slug = PermissionSlug.FEEDBACK_ALL, Name = "Feedback All" },
+                new Permission { Slug = PermissionSlug.FEEDBACK_OWN, Name = "Feedback Own" },
+                new Permission { Slug = PermissionSlug.FEEDBACK_VIEW, Name = "Feedback View" },
+                new Permission { Slug = PermissionSlug.LESSON_ALL, Name = "Lesson All" },
+                new Permission { Slug = PermissionSlug.LESSON_VIEW, Name = "Lesson View" },
+                new Permission { Slug = PermissionSlug.MATERIAL_ALL, Name = "Material All" },
+                new Permission { Slug = PermissionSlug.MATERIAL_VIEW, Name = "Material View" },
+                new Permission { Slug = PermissionSlug.ORDER_ALL, Name = "Order All" },
+                new Permission { Slug = PermissionSlug.ORDER_OWN, Name = "Order Own" },
+                new Permission { Slug = PermissionSlug.ORDER_VIEW, Name = "Order View" },
+                new Permission { Slug = PermissionSlug.PAYMENT_ALL, Name = "Payment All" },
+                new Permission { Slug = PermissionSlug.PAYMENT_OWN, Name = "Payment Own" },
+                new Permission { Slug = PermissionSlug.PAYMENT_VIEW, Name = "Payment View" },
+                new Permission { Slug = PermissionSlug.PERMISSION_ALL, Name = "Permission All" },
+                new Permission { Slug = PermissionSlug.PERMISSION_VIEW, Name = "Permission View" },
+                new Permission { Slug = PermissionSlug.ROLE_ALL, Name = "Role All" },
+                new Permission { Slug = PermissionSlug.ROLE_VIEW, Name = "Role View" },
+                new Permission { Slug = PermissionSlug.USER_ALL, Name = "User All" },
+                new Permission { Slug = PermissionSlug.USER_OWN, Name = "User Own" },
+                new Permission { Slug = PermissionSlug.USER_VIEW, Name = "User View" });
             // seed role
             modelBuilder.Entity<Role>().HasData(
                 new Role
@@ -49,6 +78,55 @@ namespace DevKid.src.Infrastructure.Context
                     Name = "STUDENT"
                 }
             );
+            // seed permission role
+            modelBuilder.Entity<Role>()
+                .HasMany(r => r.Permissions)
+                .WithMany(p => p.Roles)
+                .UsingEntity(j => j
+                .HasData(
+                    // Admin
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.CHAPTER_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.CHAPTER_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.COMMENT_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.COMMENT_OWN },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.COMMNET_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.COURSE_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.COURSE_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.FEEDBACK_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.FEEDBACK_OWN },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.FEEDBACK_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.LESSON_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.LESSON_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.MATERIAL_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.MATERIAL_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.ORDER_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.ORDER_OWN },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.ORDER_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.PAYMENT_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.PAYMENT_OWN },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.PAYMENT_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.PERMISSION_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.PERMISSION_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.ROLE_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.ROLE_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_OWN },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW },
+                    // Student
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.COURSE_VIEW },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.LESSON_VIEW },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.MATERIAL_VIEW },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.COMMNET_VIEW },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.COMMENT_OWN },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.FEEDBACK_OWN },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.FEEDBACK_VIEW },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.ORDER_OWN },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.PAYMENT_OWN },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_OWN }
+                ));
+
+            modelBuilder.Entity<StudentCourse>().HasKey(sc => new { sc.StudentId, sc.CourseId });
+
             modelBuilder.Entity<User>().HasData(
                 new User
                 {

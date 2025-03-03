@@ -9,5 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddChapter(Chapter chapter);
         Task<bool> UpdateChapter(Chapter chapter);
         Task<bool> DeleteChapter(Guid id);
+        Task<IEnumerable<Chapter>> GetChaptersByCourseId(Guid courseId);
     }
 }

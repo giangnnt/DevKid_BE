@@ -14,6 +14,8 @@ namespace DevKid.src.Application.Dto
         public int Price { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public StatusEnum Status { get; set; }
+        public DateTime CreateAt { get; set; }
+        public DateTime UpdateAt { get; set; }
     }
     public class OrderCreateDto
     {

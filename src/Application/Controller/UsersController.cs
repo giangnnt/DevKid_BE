@@ -13,6 +13,7 @@ using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Constant;
 
 namespace DevKid.src.Application.Controller
 {
@@ -32,6 +33,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpGet]
+        [Permission(PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW)]
         public async Task<ActionResult> GetUsers()
         {
             var response = new ResponseDto();
@@ -65,6 +67,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpGet("{id}")]
+        [Permission(PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW)]
         public async Task<ActionResult> GetUser(Guid id)
         {
             var response = new ResponseDto();
@@ -98,6 +101,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpPut("{id}")]
+        [Permission(PermissionSlug.USER_ALL)]
         public async Task<IActionResult> PutUser(Guid id, UserUpdateDto user)
         {
             var response = new ResponseDto();
@@ -129,6 +133,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpPost]
+        [Permission(PermissionSlug.USER_ALL)]
         public async Task<ActionResult<User>> PostUser(UserCreateDto user)
         {
             var response = new ResponseDto();
@@ -159,6 +164,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpDelete("{id}")]
+        [Permission(PermissionSlug.USER_ALL)]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             var response = new ResponseDto();

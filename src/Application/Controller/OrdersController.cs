@@ -14,6 +14,7 @@ using DevKid.src.Application.Service;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
 using DevKid.src.Application.Core;
+using DevKid.src.Application.Constant;
 
 namespace DevKid.src.Application.Controller
 {
@@ -39,6 +40,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpGet]
+        [Permission(PermissionSlug.ORDER_ALL, PermissionSlug.ORDER_VIEW)]
         public async Task<ActionResult> GetOrders()
         {
             var response = new ResponseDto();
@@ -72,6 +74,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpGet("{id}")]
+        [Permission(PermissionSlug.ORDER_ALL, PermissionSlug.ORDER_VIEW)]
         public async Task<ActionResult> GetOrder(long id)
         {
             var response = new ResponseDto();
@@ -105,6 +108,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost("payment-url")]
+        [Permission(PermissionSlug.ORDER_ALL, PermissionSlug.ORDER_OWN)]
         public async Task<ActionResult> CreatePaymentUrl([FromQuery] Guid courseId)
         {
             var response = new ResponseDto();
@@ -211,6 +215,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpDelete("{id}")]
+        [Permission(PermissionSlug.ORDER_ALL)]
         public async Task<IActionResult> DeleteOrder(long id)
         {
             var response = new ResponseDto();
@@ -237,5 +242,46 @@ namespace DevKid.src.Application.Controller
                 return BadRequest(response);
             }
         }
+        [Protected]
+        [HttpPost("own")]
+        [Permission(PermissionSlug.ORDER_ALL, PermissionSlug.ORDER_OWN)]
+        public async Task<ActionResult> GetOrderOwn()
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var payload = HttpContext.Items["payload"] as Payload;
+                if (payload == null)
+                {
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return Unauthorized(response);
+                }
+                var orders = await _orderRepo.GetOrdersByUserId(payload.UserId);
+                if (orders != null)
+                {
+                    response.Message = "Orders fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<IEnumerable<OrderDto>>(orders)
+                    };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Orders not fetched";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return BadRequest(response);
+            }
+        }
+
     }
 }

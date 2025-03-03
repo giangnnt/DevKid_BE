@@ -10,6 +10,7 @@
         public string Password { get; set; } = null!;
         public bool IsActive { get; set; }
         public string Phone { get; set; } = null!;
+        public string? AvatarUrl { get; set; }
 
     }
 }

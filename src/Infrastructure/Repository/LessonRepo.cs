@@ -40,6 +40,14 @@ namespace DevKid.src.Infrastructure.Repository
                 .FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Lesson not found");
         }
 
+        public async Task<IEnumerable<Lesson>> GetLessonsByChapterId(Guid chapterId)
+        {
+            return await _context.Lessons
+                .Include(x => x.Materials)
+                .Where(x => x.ChapterId == chapterId)
+                .ToListAsync();
+        }
+
         public async Task<bool> UpdateLesson(Lesson lesson)
         {
             _context.Lessons.Update(lesson);

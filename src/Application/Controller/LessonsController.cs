@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using DevKid.src.Application.Constant;
+using DevKid.src.Application.Core;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Service;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -18,44 +21,51 @@ namespace DevKid.src.Application.Controller
         private readonly ILessonRepo _lessonRepo;
         private readonly IMapper _mapper;
         private readonly IChapterRepo _chapterRepo;
-        public LessonsController(ILessonRepo lessonRepo, IMapper mapper, IChapterRepo chapterRepo)
+        private readonly ICourseRepo _courseRepo;
+        private readonly IOrderRepo _orderRepo;
+        private readonly IBoughtCertificateService _boughtCertificateService;
+        public LessonsController(ILessonRepo lessonRepo, IMapper mapper, IChapterRepo chapterRepo, ICourseRepo courseRepo, IOrderRepo orderRepo, IBoughtCertificateService boughtCertificateService)
         {
             _lessonRepo = lessonRepo;
             _mapper = mapper;
             _chapterRepo = chapterRepo;
+            _courseRepo = courseRepo;
+            _orderRepo = orderRepo;
+            _boughtCertificateService = boughtCertificateService;
         }
-        [Protected]
-        [HttpGet]
-        public async Task<IActionResult> GetAllLessons()
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var lessons = await _lessonRepo.GetAllLessons();
-                var mappedLessons = _mapper.Map<IEnumerable<LessonDto>>(lessons);
-                if (mappedLessons != null && mappedLessons.Count() > 0)
-                {
-                    response.Message = "Lessons fetched successfully";
-                    response.Result = new ResultDto { Data = mappedLessons };
-                    response.IsSuccess = true;
-                    return Ok(response);
-                }
-                else
-                {
-                    response.Message = "No lessons found";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
+        //[Protected]
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllLessons()
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var lessons = await _lessonRepo.GetAllLessons();
+        //        var mappedLessons = _mapper.Map<IEnumerable<LessonDto>>(lessons);
+        //        if (mappedLessons != null && mappedLessons.Count() > 0)
+        //        {
+        //            response.Message = "Lessons fetched successfully";
+        //            response.Result = new ResultDto { Data = mappedLessons };
+        //            response.IsSuccess = true;
+        //            return Ok(response);
+        //        }
+        //        else
+        //        {
+        //            response.Message = "No lessons found";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.IsSuccess = false;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
         [Protected]
         [HttpGet("{id}")]
+        [Permission(PermissionSlug.LESSON_ALL, PermissionSlug.LESSON_VIEW)]
         public async Task<IActionResult> GetLessonById(Guid id)
         {
             var response = new ResponseDto();
@@ -65,6 +75,23 @@ namespace DevKid.src.Application.Controller
                 var mappedLesson = _mapper.Map<LessonDto>(lesson);
                 if (mappedLesson != null)
                 {
+                    // only admin and manager can access lesson detail without buying
+                    var payload = HttpContext.Items["payload"] as Payload;
+                    if (payload == null)
+                    {
+                        response.Message = "Unauthorized";
+                        response.IsSuccess = false;
+                        return BadRequest(response);
+                    }
+                    if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
+                    {
+                        if (! await _boughtCertificateService.CheckCertificateAsync(lesson.Id, payload.UserId))
+                        {
+                            response.Message = "Unauthorized";
+                            response.IsSuccess = false;
+                            return BadRequest(response);
+                        }
+                    }
                     response.Message = "Lesson fetched successfully";
                     response.Result = new ResultDto { Data = mappedLesson };
                     response.IsSuccess = true;
@@ -86,6 +113,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost]
+        [Permission(PermissionSlug.LESSON_ALL)]
         public async Task<IActionResult> CreateLesson([FromBody] LessonCreateDto lessonCreateDto)
         {
             var response = new ResponseDto();
@@ -116,6 +144,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPut("{id}")]
+        [Permission(PermissionSlug.LESSON_ALL)]
         public async Task<IActionResult> UpdateLesson(Guid id, [FromBody] LessonUpdateDto lesson)
         {
             var response = new ResponseDto();
@@ -146,6 +175,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpDelete("{id}")]
+        [Permission(PermissionSlug.LESSON_ALL)]
         public async Task<IActionResult> DeleteLesson(Guid id)
         {
             var response = new ResponseDto();
@@ -161,6 +191,51 @@ namespace DevKid.src.Application.Controller
                 else
                 {
                     response.Message = "Lesson not deleted";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        [Protected]
+        [HttpGet("chapter/{chapterId}")]
+        [Permission(PermissionSlug.LESSON_ALL, PermissionSlug.LESSON_VIEW)]
+        public async Task<IActionResult> GetLessonsByChapterId(Guid chapterId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var lessons = await _lessonRepo.GetLessonsByChapterId(chapterId);
+                var mappedLessons = _mapper.Map<IEnumerable<LessonDto>>(lessons);
+                if (mappedLessons != null && mappedLessons.Count() > 0)
+                {
+                    // only admin and manager can access lesson detail without buying
+                    var payload = HttpContext.Items["payload"] as Payload;
+                    if (payload == null)
+                    {
+                        response.Message = "Unauthorized";
+                        response.IsSuccess = false;
+                        return BadRequest(response);
+                    }
+                    if (! await _boughtCertificateService.CheckCertificateAsync(chapterId, payload.UserId))
+                    {
+                        response.Message = "Unauthorized";
+                        response.IsSuccess = false;
+                        return BadRequest(response);
+                    }
+                    response.Message = "Lessons fetched successfully";
+                    response.Result = new ResultDto { Data = mappedLessons };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "No lessons found";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

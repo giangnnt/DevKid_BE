@@ -10,5 +10,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> UpdateOrder(Order order);
         Task<bool> DeleteOrder(long id);
         Task<bool> HaveUserBoughtCourse(Guid courseId, Guid userId);
+        Task<IEnumerable<Order>> GetOrdersByUserId(Guid userId);
     }
 }

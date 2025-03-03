@@ -9,5 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddMaterial(Material material);
         Task<bool> UpdateMaterial(Material material);
         Task<bool> DeleteMaterial(Guid id);
+        Task<IEnumerable<Material>> GetMaterialsByLessonId(Guid lessonId);
     }
 }

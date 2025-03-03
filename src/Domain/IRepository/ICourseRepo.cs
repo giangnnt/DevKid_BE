@@ -9,5 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddCourse(Course course);
         Task<bool> UpdateCourse(Course course);
         Task<bool> DeleteCourse(Guid id);
+        Task<IEnumerable<Course>> GetBoughtCourse(Guid userId);
     }
 }

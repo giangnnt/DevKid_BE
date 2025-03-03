@@ -40,6 +40,14 @@ namespace DevKid.src.Infrastructure.Repository
                 .FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Chapter not found");
         }
 
+        public async Task<IEnumerable<Chapter>> GetChaptersByCourseId(Guid courseId)
+        {
+            return await _context.Chapters
+                .Include(x => x.Lessons)
+                .Where(x => x.CourseId == courseId)
+                .ToListAsync();
+        }
+
         public async Task<bool> UpdateChapter(Chapter chapter)
         {
             _context.Chapters.Update(chapter);

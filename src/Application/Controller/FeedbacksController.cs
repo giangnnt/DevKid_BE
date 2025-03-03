@@ -13,6 +13,7 @@ using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
 using DevKid.src.Application.Core;
+using DevKid.src.Application.Constant;
 
 namespace DevKid.src.Application.Controller
 {
@@ -70,6 +71,37 @@ namespace DevKid.src.Application.Controller
         //}
 
         // GET: api/Feedbacks/5
+        [HttpGet]
+        public async Task<ActionResult> GetFeedbacksByCourseId(Guid courseId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var feedbacks = await _feedbackRepo.GetFeedbacksByCourseId(courseId);
+                if (feedbacks != null)
+                {
+                    response.Message = "Feedbacks fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<IEnumerable<FeedbackDto>>(feedbacks)
+                    };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Feedbacks not fetched";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult> GetFeedback(Guid id)
         {
@@ -104,6 +136,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpPut("{id}")]
+        [Permission(PermissionSlug.FEEDBACK_ALL, PermissionSlug.FEEDBACK_OWN)]
         public async Task<IActionResult> PutFeedback(Guid id, FeedbackUpdateDto feedback)
         {
             var response = new ResponseDto();
@@ -133,6 +166,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost]
+        [Permission(PermissionSlug.FEEDBACK_ALL, PermissionSlug.FEEDBACK_OWN)]
         public async Task<ActionResult<Feedback>> PostFeedback(FeedbackCreateDto feedback)
         {
             
@@ -188,6 +222,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpDelete("{id}")]
+        [Permission(PermissionSlug.FEEDBACK_ALL, PermissionSlug.FEEDBACK_OWN)]
         public async Task<IActionResult> DeleteFeedback(Guid id)
         {
             var response = new ResponseDto();

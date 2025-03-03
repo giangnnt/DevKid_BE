@@ -37,6 +37,11 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.Orders.ToListAsync();
         }
 
+        public async Task<IEnumerable<Order>> GetOrdersByUserId(Guid userId)
+        {
+            return await _context.Orders.Where(o => o.StudentId == userId).ToListAsync();
+        }
+
         public async Task<bool> HaveUserBoughtCourse(Guid courseId, Guid userId)
         {
             var result = await _context.Orders.FirstOrDefaultAsync(o => o.CourseId == courseId && o.StudentId == userId);

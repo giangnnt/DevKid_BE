@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using DevKid.src.Application.Constant;
+using DevKid.src.Application.Core;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Service;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -16,52 +19,73 @@ namespace DevKid.src.Application.Controller
         private readonly IChapterRepo _chapterRepo;
         private readonly ICourseRepo _courseRepo;
         private readonly IMapper _mapper;
-        public ChaptersController(IChapterRepo chapterRepo, IMapper mapper, ICourseRepo courseRepo)
+        private readonly IBoughtCertificateService _boughtCertificateService;
+        public ChaptersController(IChapterRepo chapterRepo, IMapper mapper, ICourseRepo courseRepo, IBoughtCertificateService boughtCertificateService)
         {
             _chapterRepo = chapterRepo;
             _mapper = mapper;
             _courseRepo = courseRepo;
+            _boughtCertificateService = boughtCertificateService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAllChapters()
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var chapters = await _chapterRepo.GetAllChapters();
-                if (chapters != null)
-                {
-                    response.Message = "Chapters fetched successfully";
-                    response.Result = new ResultDto
-                    {
-                        Data = _mapper.Map<IEnumerable<ChapterDto>>(chapters)
-                    };
-                    response.IsSuccess = true;
-                    return Ok(response);
-                }
-                else
-                {
-                    response.Message = "Chapters not fetched";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllChapters()
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var chapters = await _chapterRepo.GetAllChapters();
+        //        if (chapters != null)
+        //        {
+        //            response.Message = "Chapters fetched successfully";
+        //            response.Result = new ResultDto
+        //            {
+        //                Data = _mapper.Map<IEnumerable<ChapterDto>>(chapters)
+        //            };
+        //            response.IsSuccess = true;
+        //            return Ok(response);
+        //        }
+        //        else
+        //        {
+        //            response.Message = "Chapters not fetched";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.IsSuccess = false;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
+        [Protected]
         [HttpGet("{id}")]
+        [Permission(PermissionSlug.CHAPTER_ALL, PermissionSlug.CHAPTER_VIEW)]
         public async Task<IActionResult> GetChapterById(Guid id)
         {
             var response = new ResponseDto();
             try
             {
+                var payload = HttpContext.Items["payload"] as Payload ;
+                if (payload == null)
+                {
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
                 var chapter = await _chapterRepo.GetChapterById(id);
                 if (chapter != null)
                 {
+                    // only admin and manager can access chapter detail without buying
+                    if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
+                    {
+                        if(!await _boughtCertificateService.CheckCertificateAsync(chapter.Id, payload.UserId))
+                        {
+                            response.Message = "Unauthorized";
+                            response.IsSuccess = false;
+                            return BadRequest(response);
+                        }
+                    }
                     response.Message = "Chapter fetched successfully";
                     response.Result = new ResultDto
                     {
@@ -86,6 +110,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost]
+        [Permission(PermissionSlug.CHAPTER_ALL)]
         public async Task<IActionResult> AddChapter([FromBody] ChapterCreateDto chapter)
         {
             var response = new ResponseDto();
@@ -117,6 +142,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPut("{id}")]
+        [Permission(PermissionSlug.CHAPTER_ALL)]
         public async Task<IActionResult> UpdateChapter(Guid id, ChapterUpdateDto chapter)
         {
             var response = new ResponseDto();
@@ -147,6 +173,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpDelete("{id}")]
+        [Permission(PermissionSlug.CHAPTER_ALL)]
         public async Task<IActionResult> DeleteChapter(Guid id)
         {
             var response = new ResponseDto();
@@ -162,6 +189,56 @@ namespace DevKid.src.Application.Controller
                 else
                 {
                     response.Message = "Chapter not deleted";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        [Protected]
+        [HttpGet("course/{courseId}")]
+        [Permission(PermissionSlug.CHAPTER_ALL, PermissionSlug.CHAPTER_VIEW)]
+        public async Task<IActionResult> GetChaptersByCourseId(Guid courseId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var chapters = await _chapterRepo.GetChaptersByCourseId(courseId);
+                if (chapters != null)
+                {
+                    // only admin and manager can access chapter detail without buying
+                    var payload = HttpContext.Items["payload"] as Payload;
+                    if (payload == null)
+                    {
+                        response.Message = "Unauthorized";
+                        response.IsSuccess = false;
+                        return BadRequest(response);
+                    }
+                    if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
+                    {
+                        if (!await _boughtCertificateService.CheckCertificateAsync(courseId, payload.UserId))
+                        {
+                            response.Message = "Unauthorized";
+                            response.IsSuccess = false;
+                            return BadRequest(response);
+                        }
+                    }
+                    response.Message = "Chapters fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<IEnumerable<ChapterDto>>(chapters)
+                    };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Chapters not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

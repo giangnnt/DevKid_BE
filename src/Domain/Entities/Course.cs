@@ -8,6 +8,12 @@
         public string? Objective { get; set; }
         public string? ImageUrl { get; set; }
         public int Price { get; set; }  
+        public enum CourseStatus
+        {
+            Active,
+            Inactive
+        }
+        public CourseStatus Status { get; set; } = CourseStatus.Active;
         public List<Chapter> Chapters { get; set; } = new();
         public List<Feedback> Feedbacks { get; set; } = new();
         public List<StudentCourse> StudentCourses { get; set; } = null!;

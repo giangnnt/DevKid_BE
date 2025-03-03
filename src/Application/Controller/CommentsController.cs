@@ -12,6 +12,7 @@ using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Constant;
 
 namespace DevKid.src.Application.Controller
 {
@@ -32,42 +33,43 @@ namespace DevKid.src.Application.Controller
             _userRepo = userRepo;
             _lessonRepo = lessonRepo;
         }
+        //[Protected]
+        //// GET: api/Comments
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var comments = await _commentRepo.GetComments();
+        //        if (comments != null)
+        //        {
+        //            response.Message = "Comments fetched successfully";
+        //            response.Result = new ResultDto
+        //            {
+        //                Data = _mapper.Map<IEnumerable<CommentDto>>(comments)
+        //            };
+        //            response.IsSuccess = true;
+        //            return Ok(response);
+        //        }
+        //        else
+        //        {
+        //            response.Message = "Comments not fetched";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Message = ex.Message;
+        //        response.IsSuccess = false;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
+
         [Protected]
-        // GET: api/Comments
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
-        {
-            var response = new ResponseDto();
-            try
-            {
-                var comments = await _commentRepo.GetComments();
-                if (comments != null)
-                {
-                    response.Message = "Comments fetched successfully";
-                    response.Result = new ResultDto
-                    {
-                        Data = _mapper.Map<IEnumerable<CommentDto>>(comments)
-                    };
-                    response.IsSuccess = true;
-                    return Ok(response);
-                }
-                else
-                {
-                    response.Message = "Comments not fetched";
-                    response.IsSuccess = false;
-                    return BadRequest(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Message = ex.Message;
-                response.IsSuccess = false;
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
-        [Protected]
-        // GET: api/Comments/5
         [HttpGet("{id}")]
+        [Permission(PermissionSlug.COMMENT_ALL, PermissionSlug.COMMNET_VIEW)]
         public async Task<ActionResult<Comment>> GetComment(Guid id)
         {
             var response = new ResponseDto();
@@ -101,6 +103,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpPut("{id}")]
+        [Permission(PermissionSlug.COMMENT_ALL, PermissionSlug.COMMENT_OWN)]
         public async Task<IActionResult> PutComment(Guid id, CommentUpdateDto comment)
         {
             var response = new ResponseDto();
@@ -132,6 +135,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpPost]
+        [Permission(PermissionSlug.COMMENT_ALL, PermissionSlug.COMMENT_OWN)]
         public async Task<ActionResult<Comment>> PostComment(CommentCreateDto comment)
         {
             var response = new ResponseDto();
@@ -164,6 +168,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpDelete("{id}")]
+        [Permission(PermissionSlug.COMMENT_ALL, PermissionSlug.COMMENT_OWN)]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
             var response = new ResponseDto();
@@ -179,6 +184,39 @@ namespace DevKid.src.Application.Controller
                 else
                 {
                     response.Message = "Comment not deleted";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        [Protected]
+        [HttpGet("lesson/{lessonId}")]
+        [Permission(PermissionSlug.COMMENT_ALL, PermissionSlug.COMMNET_VIEW)]
+        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByLessonId(Guid lessonId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var comments = await _commentRepo.GetCommentsByLessonId(lessonId);
+                if (comments != null)
+                {
+                    response.Message = "Comments fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<IEnumerable<CommentDto>>(comments)
+                    };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Comments not fetched";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }

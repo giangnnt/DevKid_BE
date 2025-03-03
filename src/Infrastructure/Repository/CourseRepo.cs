@@ -33,6 +33,13 @@ namespace DevKid.src.Infrastructure.Repository
                .ToListAsync();
         }
 
+        public async Task<IEnumerable<Course>> GetBoughtCourse(Guid userId)
+        {
+            var orders = _context.Orders.Where(x => x.StudentId == userId);
+            var courses = await orders.Select(x => x.Course).ToListAsync();
+            return courses;
+        }
+
         public async Task<Course> GetCourseById(Guid id)
         {
             return await _context.Courses

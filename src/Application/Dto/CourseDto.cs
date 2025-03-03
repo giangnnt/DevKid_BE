@@ -1,9 +1,18 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
+using static DevKid.src.Domain.Entities.Course;
 
 namespace DevKid.src.Application.Dto
 {
+    public class CourseAllDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
+        public int Price { get; set; }
+    }
     public class CourseDto
     {
         public Guid Id { get; set; }
@@ -11,6 +20,8 @@ namespace DevKid.src.Application.Dto
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public int Price { get; set; }
+        [EnumDataType(typeof(CourseStatus))]
+        public CourseStatus Status { get; set; }
         public List<ChapterDto> Chapters { get; set; } = new();
     }
     public class CourseCreateDto
@@ -45,6 +56,8 @@ namespace DevKid.src.Application.Dto
             CreateMap<CourseUpdateDto, Course>()
                 .ForMember(dest => dest.Chapters, opt => opt.Ignore())
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Course, CourseAllDto>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

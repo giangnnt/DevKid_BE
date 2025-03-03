@@ -12,6 +12,8 @@ using AutoMapper;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto;
 using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Core;
+using DevKid.src.Application.Constant;
 
 namespace DevKid.src.Application.Controller
 {
@@ -22,17 +24,16 @@ namespace DevKid.src.Application.Controller
     {
         private readonly IPaymentRepo _paymentRepo;
         private readonly IMapper _mapper;
-        private readonly IOrderRepo _orderRepo;
 
-        public PaymentsController(IPaymentRepo paymentRepo, IMapper mapper, IOrderRepo orderRepo)
+        public PaymentsController(IPaymentRepo paymentRepo, IMapper mapper)
         {
             _paymentRepo = paymentRepo;
             _mapper = mapper;
-            _orderRepo = orderRepo;
         }
 
         [Protected]
         [HttpGet]
+        [Permission(PermissionSlug.PAYMENT_ALL, PermissionSlug.PAYMENT_VIEW)]
         public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
         {
             var response = new ResponseDto();
@@ -66,6 +67,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpGet("{id}")]
+        [Permission(PermissionSlug.PAYMENT_ALL, PermissionSlug.PAYMENT_VIEW)]
         public async Task<ActionResult> GetPayment(Guid id)
         {
             var response = new ResponseDto();
@@ -130,6 +132,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpDelete("{id}")]
+        [Permission(PermissionSlug.PAYMENT_ALL)]
         public async Task<IActionResult> DeletePayment(Guid id)
         {
             var response = new ResponseDto();
@@ -154,6 +157,46 @@ namespace DevKid.src.Application.Controller
                 response.Message = ex.Message;
                 response.IsSuccess = false;
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        [Protected]
+        [HttpGet("own")]
+        [Permission(PermissionSlug.PAYMENT_ALL, PermissionSlug.PAYMENT_OWN)]
+        public async Task<ActionResult> GetOwnPayments()
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var payload = HttpContext.Items["payload"] as Payload;
+                if (payload == null)
+                {
+                    response.Message = "Payload not found";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+                var payments = await _paymentRepo.GetPaymentsByUserId(payload.UserId);
+                if (payments != null)
+                {
+                    response.Message = "Payments fetched successfully";
+                    response.Result = new ResultDto
+                    {
+                        Data = _mapper.Map<IEnumerable<PaymentDto>>(payments)
+                    };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Payments not fetched";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return BadRequest(response);
             }
         }
     }

@@ -9,5 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddLesson(Lesson lesson);
         Task<bool> UpdateLesson(Lesson lesson);
         Task<bool> DeleteLesson(Guid id);
+        Task<IEnumerable<Lesson>> GetLessonsByChapterId(Guid chapterId);
     }
 }

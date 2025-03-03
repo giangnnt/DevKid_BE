@@ -36,6 +36,11 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.Comments.ToListAsync();
         }
 
+        public async Task<IEnumerable<Comment>> GetCommentsByLessonId(Guid lessonId)
+        {
+            return await _context.Comments.Where(x => x.LessonId == lessonId).ToListAsync();
+        }
+
         public async Task<bool> UpdateComment(Comment comment)
         {
             _context.Comments.Update(comment);

@@ -9,16 +9,20 @@ namespace DevKid.src.Application.Dto
         public int RoleId { get; set; }
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
+        public string? AvatarUrl { get; set; }
     }
     public class UserCreateDto
     {
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
+        public int RoleId { get; set; }
         public string Password { get; set; } = null!;
+        public string? AvatarUrl { get; set;}
     }
     public class UserUpdateDto
     {
         public string? Name { get; set; }
+        public string? AvatarUrl { get; set; }
     }
     public class UserProfile : Profile
     {
@@ -38,7 +42,6 @@ namespace DevKid.src.Application.Dto
                 .ForMember(dest => dest.Role, opt => opt.Ignore())
                 .ForMember(dest => dest.Password, opt => opt.Ignore())
                 .ForMember(dest => dest.IsActive, opt => opt.Ignore())
-                .ForMember(dest => dest.RoleId, opt => opt.Ignore())
                 .ForMember(dest => dest.Phone, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }

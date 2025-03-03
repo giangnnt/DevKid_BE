@@ -9,6 +9,8 @@
         public Student Student { get; set; } = null!;
         public Course Course { get; set; } = null!;
         public Payment? Payment { get; set; }
+        public DateTime CreateAt { get; set; }
+        public DateTime UpdateAt { get; set; }
         public enum StatusEnum
         {
             Pending,

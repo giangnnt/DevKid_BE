@@ -28,7 +28,8 @@
         public const string ROLE_VIEW = "ROLE.VIEW";
         public const string USER_ALL = "USER.ALL";
         public const string USER_OWN = "USER.OWN";
-        public const string USER_VIEW = "USER.VIEW";
+        public const string USER_VIEW_BASIC = "USER.VIEW.BASIC";
+        public const string USER_VIEW_DETAIL = "USER.VIEW.DETAIL";
 
     }
 }

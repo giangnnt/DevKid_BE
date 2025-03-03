@@ -35,7 +35,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpGet]
-        [Permission(PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW)]
+        [Permission(PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW_DETAIL)]
         public async Task<ActionResult> GetUsers()
         {
             var response = new ResponseDto();
@@ -69,7 +69,7 @@ namespace DevKid.src.Application.Controller
 
         [Protected]
         [HttpGet("{id}")]
-        [Permission(PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW)]
+        [Permission(PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW_BASIC, PermissionSlug.USER_VIEW_DETAIL)]
         public async Task<ActionResult> GetUser(Guid id)
         {
             var response = new ResponseDto();
@@ -242,7 +242,7 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpGet("own")]
-        [Permission(PermissionSlug.USER_OWN, PermissionSlug.USER_ALL, PermissionSlug.USER_VIEW)]
+        [Permission(PermissionSlug.USER_OWN, PermissionSlug.USER_ALL)]
         public async Task<IActionResult> GetUserOwn()
         {
             var response = new ResponseDto();

@@ -59,7 +59,8 @@ namespace DevKid.src.Infrastructure.Context
                 new Permission { Slug = PermissionSlug.ROLE_VIEW, Name = "Role View" },
                 new Permission { Slug = PermissionSlug.USER_ALL, Name = "User All" },
                 new Permission { Slug = PermissionSlug.USER_OWN, Name = "User Own" },
-                new Permission { Slug = PermissionSlug.USER_VIEW, Name = "User View" });
+                new Permission { Slug = PermissionSlug.USER_VIEW_BASIC, Name = "User View Basic" },
+                new Permission { Slug = PermissionSlug.USER_VIEW_DETAIL, Name = "User View Detail" });
             // seed role
             modelBuilder.Entity<Role>().HasData(
                 new Role
@@ -111,7 +112,8 @@ namespace DevKid.src.Infrastructure.Context
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.ROLE_VIEW },
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_ALL },
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_OWN },
-                    new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW_BASIC },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW_DETAIL },
                     // Student
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.COURSE_VIEW },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.LESSON_VIEW },
@@ -122,7 +124,8 @@ namespace DevKid.src.Infrastructure.Context
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.FEEDBACK_VIEW },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.ORDER_OWN },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.PAYMENT_OWN },
-                    new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_OWN }
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_OWN },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_VIEW_BASIC }
                 ));
 
             modelBuilder.Entity<StudentCourse>().HasKey(sc => new { sc.StudentId, sc.CourseId });

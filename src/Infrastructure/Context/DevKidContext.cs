@@ -28,6 +28,9 @@ namespace DevKid.src.Infrastructure.Context
         public DbSet<StudentCourse> StudentCourses { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
+        public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<StudentQuiz> StudentQuizzes { get; set; }
+        public DbSet<Ans> Answers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -60,7 +63,9 @@ namespace DevKid.src.Infrastructure.Context
                 new Permission { Slug = PermissionSlug.USER_ALL, Name = "User All" },
                 new Permission { Slug = PermissionSlug.USER_OWN, Name = "User Own" },
                 new Permission { Slug = PermissionSlug.USER_VIEW_BASIC, Name = "User View Basic" },
-                new Permission { Slug = PermissionSlug.USER_VIEW_DETAIL, Name = "User View Detail" });
+                new Permission { Slug = PermissionSlug.USER_VIEW_DETAIL, Name = "User View Detail" },
+                new Permission { Slug = PermissionSlug.QUIZ_ALL, Name = "Quiz All" },
+                new Permission { Slug = PermissionSlug.STUDENT_QUIZ_ALL, Name = "Student Quiz All" });
             // seed role
             modelBuilder.Entity<Role>().HasData(
                 new Role
@@ -114,6 +119,7 @@ namespace DevKid.src.Infrastructure.Context
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_OWN },
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW_BASIC },
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW_DETAIL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.QUIZ_ALL },
                     // Student
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.COURSE_VIEW },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.LESSON_VIEW },
@@ -125,7 +131,8 @@ namespace DevKid.src.Infrastructure.Context
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.ORDER_OWN },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.PAYMENT_OWN },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_OWN },
-                    new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_VIEW_BASIC }
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_VIEW_BASIC },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.STUDENT_QUIZ_ALL }
                 ));
 
             modelBuilder.Entity<StudentCourse>().HasKey(sc => new { sc.StudentId, sc.CourseId });
@@ -154,6 +161,9 @@ namespace DevKid.src.Infrastructure.Context
                 .HasConversion<string>();
             modelBuilder.Entity<Payment>()
                 .Property(p => p.Status)
+                .HasConversion<string>();
+            modelBuilder.Entity<StudentQuiz>()
+                .Property(sq => sq.Status)
                 .HasConversion<string>();
         }
     }

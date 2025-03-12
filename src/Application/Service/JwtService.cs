@@ -20,6 +20,7 @@ namespace DevKid.src.Application.Service
             _key = System.Text.Encoding.ASCII.GetBytes(SecretKey);
             _handler = new JwtSecurityTokenHandler();
         }
+
         public string GenerateToken(Guid userId, Guid sessionId, int roleId, int exp)
         {
             var tokenDescriptor = new SecurityTokenDescriptor

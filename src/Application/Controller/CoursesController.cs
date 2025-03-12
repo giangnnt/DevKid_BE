@@ -25,7 +25,7 @@ namespace DevKid.src.Application.Controller
             _orderRepo = orderRepo;
         }
         // get course for user
-        [HttpGet]
+        [HttpGet("summary")]
         public async Task<IActionResult> GetCourseUser()
         {
             var response = new ResponseDto();
@@ -55,9 +55,38 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-            // get course for admin and manager
-            [Protected]
-        [HttpGet("admin")]
+        [HttpGet("{id}/summary")]
+        public async Task<IActionResult> GetCourseByIdSummary(Guid id)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var course = await _courseRepo.GetCourseById(id);
+                var mappedCourse = _mapper.Map<CourseAllDto>(course);
+                if (mappedCourse != null)
+                {
+                    response.Message = "Course fetched successfully";
+                    response.Result = new ResultDto { Data = mappedCourse };
+                    response.IsSuccess = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "Course not found";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        // get course for admin and manager
+        [Protected]
+        [HttpGet("detail")]
         [Permission(PermissionSlug.COURSE_ALL, PermissionSlug.COURSE_VIEW)]
         public async Task<IActionResult> GetCourses()
         {
@@ -90,7 +119,7 @@ namespace DevKid.src.Application.Controller
         // must bought course before access
         [Protected]
         [Permission(PermissionSlug.COURSE_ALL, PermissionSlug.COURSE_VIEW)]
-        [HttpGet("{id}")]
+        [HttpGet("{id}/detail")]
         public async Task<IActionResult> GetCourseById(Guid id)
         {
             var response = new ResponseDto();

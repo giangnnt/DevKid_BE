@@ -72,6 +72,8 @@ builder.Services.AddScoped<IMaterialRepo, MaterialRepo>();
 builder.Services.AddScoped<IPaymentRepo, PaymentRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IRoleBaseRepository, RoleBaseRepository>();
+builder.Services.AddScoped<IStudentQuizRepo, StudentQuizRepo>();
+builder.Services.AddScoped<IQuizRepo, QuizRepo>();
 
 // redis configuration
 Console.WriteLine($"Redis connection string: {builder.Configuration.GetConnectionString("RedisConnection")}");

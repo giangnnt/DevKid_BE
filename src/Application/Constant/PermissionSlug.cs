@@ -30,6 +30,7 @@
         public const string USER_OWN = "USER.OWN";
         public const string USER_VIEW_BASIC = "USER.VIEW.BASIC";
         public const string USER_VIEW_DETAIL = "USER.VIEW.DETAIL";
-
+        public const string QUIZ_ALL = "QUIZ.ALL";
+        public const string STUDENT_QUIZ_ALL = "STUDENT_QUIZ.ALL";
     }
 }

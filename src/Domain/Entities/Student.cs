@@ -12,5 +12,6 @@ namespace DevKid.src.Domain.Entities
         public List<Comment> Comments { get; set; } = new();
         public List<StudentCourse> StudentCourses { get; set; } = null!;
         public List<Feedback> Feedbacks { get; set; } = new();
+        public List<StudentQuiz> StudentQuizzes { get; set; } = new();
     }
 }

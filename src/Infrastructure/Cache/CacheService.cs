@@ -9,6 +9,7 @@ namespace DevKid.src.Infrastructure.Cache
     {
         private readonly IDatabase _database;
         private readonly string _redisKey = "koi_farm_shop";
+
         public CacheService(IConnectionMultiplexer connectionMultiplexer)
         {
             _database = connectionMultiplexer.GetDatabase();
@@ -42,6 +43,19 @@ namespace DevKid.src.Infrastructure.Cache
         {
             var value = await _database.StringGetAsync($"{_redisKey}:{key}");
             if (value.IsNullOrEmpty)
+            {
+                return default;
+            }
+            else
+            {
+                return JsonSerializer.Deserialize<T>(value!);
+            }
+        }
+
+        public T? GetWait<T>(string key)
+        {
+            var value = _database.StringGet($"{_redisKey}:{key}");
+            if(value.IsNullOrEmpty)
             {
                 return default;
             }

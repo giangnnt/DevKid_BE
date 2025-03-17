@@ -2,22 +2,24 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using DevKid.src.Application.Service;
+using DevKid.src.Infrastructure.Cache;
 
 namespace DevKid.src.Application.Middleware
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
     public class ProtectedAttribute : Attribute, IAuthorizationFilter
     {
-        private readonly IJwtService _jwtService;
 
         public ProtectedAttribute()
         {
-            _jwtService = new JwtService();
+
         }
 
-        public void OnAuthorization(AuthorizationFilterContext context)
+        public async void OnAuthorization(AuthorizationFilterContext context)
         {
-
+            var serviceProvider = context.HttpContext.RequestServices;
+            var cacheService = serviceProvider.GetService<ICacheService>();
+            var jwtService = new JwtService(cacheService ?? throw new Exception("Cache service not found"));
             var authorizationHeader = context.HttpContext.Request.Headers["Authorization"].ToString();
             if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
             {
@@ -36,7 +38,7 @@ namespace DevKid.src.Application.Middleware
 
             try
             {
-                var payload = _jwtService.ValidateToken(token);
+                var payload = jwtService.ValidateToken(token);
                 context.HttpContext.Items["payload"] = payload;
             }
             catch (Exception ex)

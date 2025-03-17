@@ -11,5 +11,6 @@
         Task Clear();
         Task ClearWithPattern(string pattern);
         Task ForceLogout(Guid userId);
+        T? GetWait<T>(string key);
     }
 }

@@ -1,4 +1,5 @@
-﻿using DevKid.src.Application.Dto.AuthDtos;
+﻿using DevKid.src.Application.Core;
+using DevKid.src.Application.Dto.AuthDtos;
 using DevKid.src.Application.Middleware;
 using DevKid.src.Application.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -58,11 +59,16 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout(string token)
+        public async Task<IActionResult> Logout([FromQuery]string token)
         {
             try
-            {
-                var result = await _authService.Logout(token);
+            {   
+                var payload = HttpContext.Items["payload"] as Payload;
+                if (payload is null)
+                {
+                    return BadRequest("Invalid token");
+                }
+                var result = await _authService.Logout(token, payload);
                 return Ok(result);
             }
             catch (Exception ex)

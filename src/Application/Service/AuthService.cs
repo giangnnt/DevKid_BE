@@ -3,6 +3,7 @@ using DevKid.src.Application.Core;
 using DevKid.src.Application.Dto.AuthDtos;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Dto.Session;
+using DevKid.src.Application.Middleware;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
 using DevKid.src.Infrastructure.Cache;
@@ -15,7 +16,7 @@ namespace DevKid.src.Application.Service
         Task<ResponseDto> Login(LoginDto loginDto);
         Task<ResponseDto> Register(RegisterDto registerDto);
         Task<ResponseDto> RefreshToken(string token);
-        Task<ResponseDto> Logout(string token);
+        Task<ResponseDto> Logout(string token, Payload payload);
     }
     public class AuthService : IAuthService
     {
@@ -222,8 +223,8 @@ namespace DevKid.src.Application.Service
             rng.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);
         }
-
-        public async Task<ResponseDto> Logout(string token)
+        [Protected]
+        public async Task<ResponseDto> Logout(string token, Payload payload)
         {
             var response = new ResponseDto();
             try
@@ -266,6 +267,7 @@ namespace DevKid.src.Application.Service
                 // remove refresh token and session
                 await _cacheService.Remove(redisRfTkKey);
                 await _cacheService.Remove(redisSessionKey);
+                await _cacheService.Set($"blacklist:jti:{payload.Jti}", true, TimeSpan.FromSeconds(JwtConst.ACCESS_TOKEN_EXP));
 
                 response.StatusCode = 200;
                 response.Message = "Logout successful";

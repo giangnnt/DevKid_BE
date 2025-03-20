@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
+using System.Text.Json.Serialization;
 using static DevKid.src.Domain.Entities.StudentQuiz;
 
 namespace DevKid.src.Application.Dto
@@ -10,6 +11,7 @@ namespace DevKid.src.Application.Dto
         public Guid StudentId { get; set; }
         public Dictionary<string, StudentAns>? QuesAns { get; set; }
         public float Score { get; set; } = 0;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public QuizStatus Status { get; set; }
     }
     public class StudentQuizCreateDto

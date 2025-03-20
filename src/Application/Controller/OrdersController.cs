@@ -28,14 +28,16 @@ namespace DevKid.src.Application.Controller
         private readonly IPayOSService _payOSService;
         private readonly ICourseRepo _courseRepo;
         private readonly IPaymentRepo _paymentRepo;
+        private readonly IBoughtCertificateService _boughtCertificateService;
 
-        public OrdersController(IOrderRepo orderRepo, IMapper mapper, IPayOSService payOSService, ICourseRepo courseRepo, IPaymentRepo paymentRepo)
+        public OrdersController(IOrderRepo orderRepo, IMapper mapper, IPayOSService payOSService, ICourseRepo courseRepo, IPaymentRepo paymentRepo, IBoughtCertificateService boughtCertificateService)
         {
             _mapper = mapper;
             _orderRepo = orderRepo;
             _payOSService = payOSService;
             _courseRepo = courseRepo;
             _paymentRepo = paymentRepo;
+            _boughtCertificateService = boughtCertificateService;
         }
 
         [Protected]
@@ -120,6 +122,12 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Unauthorized";
                     response.IsSuccess = false;
                     return Unauthorized(response);
+                }
+                if(await _boughtCertificateService.CheckCertificateAsync(courseId, payload.UserId))
+                {
+                    response.Message = "Order for this course already been queue";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
                 }
                 var course = await _courseRepo.GetCourseById(courseId);
                 var paymentUrl = await _payOSService.GeneratePaymentUrl(course, payload.UserId);

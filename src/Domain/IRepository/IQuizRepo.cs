@@ -9,9 +9,5 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> CreateQuiz(Quiz quiz);
         Task<bool> UpdateQuiz(Quiz quiz);
         Task<bool> DeleteQuiz(Guid id);
-        Task<Ans> GetAnsById(Guid id);
-        Task<bool> CreateAns(Ans ans);
-        Task<bool> UpdateAns(Ans ans);
-        Task<bool> DeleteAns(Guid id);
     }
 }

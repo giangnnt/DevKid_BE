@@ -22,6 +22,7 @@ namespace DevKid.src.Application.Service
             listId.AddRange(boughtCourse.SelectMany(c => c.Chapters).Select(ch => ch.Id));
             listId.AddRange(boughtCourse.SelectMany(c => c.Chapters).SelectMany(ch => ch.Lessons).Select(l => l.Id));
             listId.AddRange(boughtCourse.SelectMany(c => c.Chapters).SelectMany(ch => ch.Lessons).SelectMany(l => l.Materials).Select(l => l.Id));
+            listId.AddRange(boughtCourse.SelectMany(c => c.Chapters).SelectMany(ch => ch.Lessons).SelectMany(l => l.Quizzes).Select(l => l.Id));
             foreach (var id in listId)
             {
                 if (Id == id)

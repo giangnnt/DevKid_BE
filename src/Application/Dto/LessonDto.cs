@@ -12,6 +12,7 @@ namespace DevKid.src.Application.Dto
         public Guid ChapterId { get; set; }
         public List<MaterialDto> Materials { get; set; } = new();
         public List<CommentDto> Comments { get; set; } = new();
+        public List<QuizDto> Quizzes { get; set; } = new();
     }
     public class LessonCreateDto
     {

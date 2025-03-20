@@ -11,20 +11,24 @@ namespace DevKid.src.Domain.Entities
         public Guid LessonId { get; set; }
         public string? QuesAnsJson { get; set; }
         [NotMapped]
-        public Dictionary<string, List<Ans>> QuesAns
+        public Dictionary<string, List<Ans>>? QuesAns
         {
-            get => JsonConvert.DeserializeObject<Dictionary<string, List<Ans>>>(QuesAnsJson ?? "") ?? new Dictionary<string, List<Ans>>();
+            get => JsonConvert.DeserializeObject<Dictionary<string, List<Ans>>>(QuesAnsJson ?? "");
             set => QuesAnsJson = JsonConvert.SerializeObject(value);
         }
         public Lesson Lesson { get; set; } = null!;
-
     }
+    [NotMapped]
     public class Ans
     {
         public Guid Id { get; set; }
         public string? Content { get; set; }
         public bool IsCorrect { get; set; }
-        public Guid QuizId { get; set; }
-        public Quiz Quiz { get; set; } = null!;
     }
+    //[NotMapped]
+    //public class Ques
+    //{
+    //    public Guid Id { get; set; } = Guid.NewGuid();
+    //    public string? Content { get; set; }
+    //}
 }

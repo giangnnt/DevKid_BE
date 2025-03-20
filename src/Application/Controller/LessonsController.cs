@@ -85,7 +85,7 @@ namespace DevKid.src.Application.Controller
                     }
                     if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
                     {
-                        if (! await _boughtCertificateService.CheckCertificateAsync(lesson.Id, payload.UserId))
+                        if (!await _boughtCertificateService.CheckCertificateAsync(lesson.Id, payload.UserId))
                         {
                             response.Message = "Unauthorized";
                             response.IsSuccess = false;
@@ -222,11 +222,14 @@ namespace DevKid.src.Application.Controller
                         response.IsSuccess = false;
                         return BadRequest(response);
                     }
-                    if (! await _boughtCertificateService.CheckCertificateAsync(chapterId, payload.UserId))
+                    if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
                     {
-                        response.Message = "Unauthorized";
-                        response.IsSuccess = false;
-                        return BadRequest(response);
+                        if (!await _boughtCertificateService.CheckCertificateAsync(chapterId, payload.UserId))
+                        {
+                            response.Message = "Unauthorized";
+                            response.IsSuccess = false;
+                            return BadRequest(response);
+                        }
                     }
                     response.Message = "Lessons fetched successfully";
                     response.Result = new ResultDto { Data = mappedLessons };

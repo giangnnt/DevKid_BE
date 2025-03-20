@@ -13,11 +13,15 @@ namespace DevKid.src.Infrastructure.Repository
             _context = context;
         }
 
-        public async Task<bool> CreateAns(Ans ans)
-        {
-            _context.Answers.Add(ans);
-            return await _context.SaveChangesAsync() > 0;
-        }
+        //public async Task<List<Guid>> CreateListQuiz(List<Quiz> quizzes)
+        //{
+        //    foreach (var quiz in quizzes)
+        //    {
+        //        _context.Quizzes.Add(quiz);
+        //    }
+        //    await _context.SaveChangesAsync();
+        //    return quizzes.Select(x => x.Id).ToList();
+        //}
 
         public async Task<bool> CreateQuiz(Quiz quiz) 
         {
@@ -26,21 +30,10 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> DeleteAns(Guid id)
-        {
-            _context.Answers.Remove(await GetAnsById(id));
-            return await _context.SaveChangesAsync() > 0;
-        }
-
         public async Task<bool> DeleteQuiz(Guid id)
         {
             _context.Quizzes.Remove(await GetQuizById(id));
             return await _context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<Ans> GetAnsById(Guid id)
-        {
-            return await _context.Answers.FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Ans not found");
         }
 
         public async Task<Quiz> GetQuizById(Guid id)
@@ -52,12 +45,6 @@ namespace DevKid.src.Infrastructure.Repository
         public async Task<IEnumerable<Quiz>> GetQuizByLessonId(Guid lessonId)
         {
             return await _context.Quizzes.Where(x => x.LessonId == lessonId).ToListAsync();
-        }
-
-        public async Task<bool> UpdateAns(Ans ans)
-        {
-            _context.Answers.Update(ans);
-            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> UpdateQuiz(Quiz quiz)

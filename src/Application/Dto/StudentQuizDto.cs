@@ -8,18 +8,18 @@ namespace DevKid.src.Application.Dto
     {
         public Guid Id { get; set; }
         public Guid StudentId { get; set; }
-        public Guid AnsId { get; set; }
-        public AnsDto Ans { get; set; } = null!;
+        public Dictionary<string, StudentAns>? QuesAns { get; set; }
+        public float Score { get; set; } = 0;
         public QuizStatus Status { get; set; }
     }
     public class StudentQuizCreateDto
     {
-        public Guid StudentId { get; set; }
-        public Guid AnsId { get; set; }
+        public Guid QuizId { get; set; }
+        public Dictionary<string, List<Guid>?>? QuesAns { get; set; }
     }
     public class StudentQuizUpdateDto
     {
-        public Guid AnsId { get; set; }
+        public Dictionary<string, List<Guid>?>? QuesAns { get; set; }
     }
     public class StudentQuizProfile : Profile
     {
@@ -28,14 +28,15 @@ namespace DevKid.src.Application.Dto
             CreateMap<StudentQuizCreateDto, StudentQuiz>()
                 .ForMember(dest => dest.Id, opts => opts.Ignore())
                 .ForMember(dest => dest.Student, opts => opts.Ignore())
-                .ForMember(dest => dest.Ans, opts => opts.Ignore())
+                .ForMember(dest => dest.QuesAns, opts => opts.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<StudentQuizUpdateDto, StudentQuiz>()
                 .ForMember(dest => dest.Id, opts => opts.Ignore())
                 .ForMember(dest => dest.Student, opts => opts.Ignore())
-                .ForMember(dest => dest.Ans, opts => opts.Ignore())
+                .ForMember(dest => dest.QuesAns, opts => opts.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<StudentQuiz, StudentQuizDto>()
+                .ForMember(dest => dest.QuesAns, opts => opts.MapFrom(src => src.QuesAns))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

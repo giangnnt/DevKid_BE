@@ -30,7 +30,6 @@ namespace DevKid.src.Infrastructure.Context
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<StudentQuiz> StudentQuizzes { get; set; }
-        public DbSet<Ans> Answers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -120,6 +119,7 @@ namespace DevKid.src.Infrastructure.Context
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW_BASIC },
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.USER_VIEW_DETAIL },
                     new { RolesId = 1, PermissionsSlug = PermissionSlug.QUIZ_ALL },
+                    new { RolesId = 1, PermissionsSlug = PermissionSlug.STUDENT_QUIZ_ALL },
                     // Student
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.COURSE_VIEW },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.LESSON_VIEW },

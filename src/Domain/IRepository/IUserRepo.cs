@@ -9,6 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddUser(User user);
         Task<bool> UpdateUser(User user);
         Task<bool> DeleteUser(Guid id);
-        Task<User> GetUserByEmail(string email);
+        Task<User?> GetUserByEmail(string email);
     }
 }

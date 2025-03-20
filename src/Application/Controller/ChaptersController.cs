@@ -208,26 +208,26 @@ namespace DevKid.src.Application.Controller
             var response = new ResponseDto();
             try
             {
-                var chapters = await _chapterRepo.GetChaptersByCourseId(courseId);
-                if (chapters != null)
+                // only admin and manager can access chapter detail without buying
+                var payload = HttpContext.Items["payload"] as Payload;
+                if (payload == null)
                 {
-                    // only admin and manager can access chapter detail without buying
-                    var payload = HttpContext.Items["payload"] as Payload;
-                    if (payload == null)
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+                if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
+                {
+                    if (!await _boughtCertificateService.CheckCertificateAsync(courseId, payload.UserId))
                     {
                         response.Message = "Unauthorized";
                         response.IsSuccess = false;
                         return BadRequest(response);
                     }
-                    if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
-                    {
-                        if (!await _boughtCertificateService.CheckCertificateAsync(courseId, payload.UserId))
-                        {
-                            response.Message = "Unauthorized";
-                            response.IsSuccess = false;
-                            return BadRequest(response);
-                        }
-                    }
+                }
+                var chapters = await _chapterRepo.GetChaptersByCourseId(courseId);
+                if (chapters != null)
+                {
                     response.Message = "Chapters fetched successfully";
                     response.Result = new ResultDto
                     {

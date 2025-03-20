@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 using static DevKid.src.Domain.Entities.Quiz;
 
 namespace DevKid.src.Domain.Entities
@@ -7,15 +8,27 @@ namespace DevKid.src.Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid StudentId { get; set; }
-        public Guid AnsId { get; set; }
-        public Ans Ans { get; set; } = null!;
+        public string? QuesAnsJson { get; set; }
+        [NotMapped]
+        public Dictionary<string, StudentAns>? QuesAns
+        {
+            get => JsonConvert.DeserializeObject<Dictionary<string, StudentAns>>(QuesAnsJson ?? "");
+            set => QuesAnsJson = JsonConvert.SerializeObject(value);
+        }
         public Student Student { get; set; } = null!;
+        public Guid QuizId { get; set; }
+        public float Score { get; set; } = 0;
         public enum QuizStatus
         {
-            InProgress,
-            Correct,
-            Incorrect
+            Uncompleted,
+            Completed   
         }
-        public QuizStatus Status { get; set; } = QuizStatus.InProgress;
+        public QuizStatus Status { get; set; } = QuizStatus.Uncompleted;
+    }
+    [NotMapped]
+    public class StudentAns
+    {
+        public List<Guid>? Id { get; set; }
+        public bool IsCorrect { get; set; }
     }
 }

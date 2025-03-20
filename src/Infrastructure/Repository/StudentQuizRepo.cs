@@ -31,17 +31,16 @@ namespace DevKid.src.Infrastructure.Repository
 
         public async Task<IEnumerable<StudentQuiz>> GetStudentQuizByStudentIdLessonId(Guid studentId, Guid lessonId)
         {
+            var quiz = await _context.Quizzes.FirstOrDefaultAsync(x => x.LessonId == lessonId) ?? throw new Exception("Quiz not found");
             return await _context.StudentQuizzes
-                .Include(x => x.Ans)
-                .Where(x => x.StudentId == studentId && x.Ans.Quiz.LessonId == lessonId)
+                .Where(x => x.StudentId == studentId && quiz.LessonId == lessonId)
                 .ToListAsync();
         }
 
-        public async Task<StudentQuiz> GetStudentQuizByStudentIdQuizId(Guid studentId, Guid quizId)
+        public async Task<StudentQuiz?> GetStudentQuizByStudentIdQuizId(Guid studentId, Guid quizId)
         {
             return await _context.StudentQuizzes
-                .Include(x => x.Ans)
-                .FirstOrDefaultAsync(x => x.StudentId == studentId && x.Ans.QuizId == quizId) ?? throw new Exception("Student answer for this quiz not found");
+                .FirstOrDefaultAsync(x => x.StudentId == studentId && x.QuizId == quizId);
         }
 
         public async Task<bool> UpdateStudentQuiz(StudentQuiz studentQuiz)

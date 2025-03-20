@@ -32,7 +32,7 @@ namespace DevKid.src.Infrastructure.Repository
                 .FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("User not found");
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmail(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }

@@ -9,5 +9,6 @@
         public Chapter Chapter { get; set; } = null!;
         public List<Material> Materials { get; set; } = new();
         public List<Comment> Comments { get; set; } = new();
+        public List<Quiz> Quizzes { get; set; } = new();
     }
 }

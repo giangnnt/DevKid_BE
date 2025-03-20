@@ -178,7 +178,119 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-
+        //[Protected]
+        //[HttpDelete]
+        //[Permission(PermissionSlug.QUIZ_ALL)]
+        //public async Task<IActionResult> DeleteStudentQuiz(Guid id)
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var payload = HttpContext.Items["payload"] as Payload;
+        //        if (payload == null)
+        //        {
+        //            response.Message = "Unauthorized";
+        //            response.IsSuccess = false;
+        //            return BadRequest(response);
+        //        }
+        //        var studentQuiz = await _studentQuizRepo.GetStudentQuizById(id);
+        //        if (studentQuiz != null)
+        //        {
+        //            if (studentQuiz.StudentId != payload.UserId)
+        //            {
+        //                response.IsSuccess = false;
+        //                response.Message = "Unauthorized";
+        //                return BadRequest(response);
+        //            }
+        //            if (await _studentQuizRepo.DeleteStudentQuiz(id))
+        //            {
+        //                response.Message = "Delete student quiz successfully";
+        //                response.IsSuccess = true;
+        //                return Ok(response);
+        //            }
+        //            else
+        //            {
+        //                response.IsSuccess = false;
+        //                response.Message = "Delete student quiz failed";
+        //                return BadRequest(response);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            response.IsSuccess = false;
+        //            response.Message = "Student quiz not found";
+        //            return BadRequest(response);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        response.IsSuccess = false;
+        //        response.Message = e.Message;
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
+        [Protected]
+        [HttpPut]
+        [Permission(PermissionSlug.QUIZ_ALL, PermissionSlug.STUDENT_QUIZ_ALL)]
+        public async Task<IActionResult> UpdateStudentQuiz([FromBody] StudentQuizUpdateDto studentQuizDto)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var payload = HttpContext.Items["payload"] as Payload;
+                if (payload == null)
+                {
+                    response.Message = "Unauthorized";
+                    response.IsSuccess = false;
+                    return BadRequest(response);
+                }
+                var studentQuiz = await _studentQuizRepo.GetStudentQuizById(studentQuizDto.QuizId);
+                if (studentQuiz != null)
+                {
+                    if (studentQuiz.StudentId != payload.UserId)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Unauthorized";
+                        return BadRequest(response);
+                    }
+                    var studentQuizAns = await PreScoreCalculate(studentQuizDto.QuesAns, studentQuizDto.QuizId);
+                    studentQuiz.QuesAns = studentQuizAns;
+                    studentQuiz.Score = (float)(studentQuizAns.Count == 0 ? 0 : (studentQuizAns.Count(x => x.Value.IsCorrect) * 10.0 / studentQuizAns.Count));
+                    if (studentQuiz.Score >= 7)
+                    {
+                        studentQuiz.Status = StudentQuiz.QuizStatus.Completed;
+                    }
+                    else
+                    {
+                        studentQuiz.Status = StudentQuiz.QuizStatus.Uncompleted;
+                    }
+                    if (await _studentQuizRepo.UpdateStudentQuiz(studentQuiz))
+                    {
+                        response.Message = "Update student quiz successfully";
+                        response.IsSuccess = true;
+                        return Ok(response);
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Update student quiz failed";
+                        return BadRequest(response);
+                    }
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Student quiz not found";
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception e)
+            {
+                response.IsSuccess = false;
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
         private async Task<Dictionary<string, StudentAns>> PreScoreCalculate(Dictionary<string, List<Guid>?>? dictInstance, Guid quizId)
         {
             // check if dictInstance is null or empty, then return empty dictionary

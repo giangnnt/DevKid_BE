@@ -19,6 +19,7 @@ namespace DevKid.src.Application.Dto
     }
     public class StudentQuizUpdateDto
     {
+        public Guid QuizId { get; set; }
         public Dictionary<string, List<Guid>?>? QuesAns { get; set; }
     }
     public class StudentQuizProfile : Profile

@@ -36,8 +36,8 @@ namespace DevKid.src.Application.Service
                     amount: course.Price,
                     description: "Thanh toan don hang",
                     items: [new ItemData(course.Name, 1, course.Price)],
-                    cancelUrl: "https://devkid.com.vn/cancel",
-                    returnUrl: "https://devkid.com.vn/success"
+                    cancelUrl: "http://localhost:5173/checkout",
+                    returnUrl: "http://localhost:5173/payment-success"
                     );
                 var response = await payOS.createPaymentLink(paymentLinkRequest);
                 // create pending order

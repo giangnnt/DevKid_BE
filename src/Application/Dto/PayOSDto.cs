@@ -15,6 +15,11 @@ namespace DevKid.src.Application.Dto
         [JsonPropertyName("signature")]
         public string Signature { get; set; } // Chữ ký để kiểm tra
     }
+    public class GeneratePaymentUrlResponse
+    {
+        public string QrCode { get; set; } = null!;
+        public string PaymentLink { get; set; } = null!;
+    }
 
     public class PayOSWebhookData
     {

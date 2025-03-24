@@ -136,7 +136,7 @@ namespace DevKid.src.Application.Controller
                     response.Message = "Payment url generated successfully";
                     response.Result = new ResultDto
                     {
-                        Data = paymentUrl
+                        Data = paymentUrl,
                     };
                     response.IsSuccess = true;
                     return Ok(response);

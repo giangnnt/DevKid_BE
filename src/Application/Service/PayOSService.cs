@@ -12,7 +12,7 @@ namespace DevKid.src.Application.Service
 {
     public interface IPayOSService
     {
-        public Task<string> GeneratePaymentUrl(Course course, Guid StudentId);
+        public Task<GeneratePaymentUrlResponse> GeneratePaymentUrl(Course course, Guid StudentId);
         public bool ValidateSignature(PayOSWebhookModel webhookData);
         public class PayOSService : IPayOSService
         {
@@ -25,7 +25,7 @@ namespace DevKid.src.Application.Service
                 _configuration = configuration;
                 _userRepo = userRepo;
             }
-            public async Task<string> GeneratePaymentUrl(Course course, Guid StudentId)
+            public async Task<GeneratePaymentUrlResponse> GeneratePaymentUrl(Course course, Guid StudentId)
             {
                 var clientId = _configuration["PayOS:CLIENT_ID"] ?? throw new Exception("client id is null");
                 var apiKet = _configuration["PayOS:API_KEY"] ?? throw new Exception("api key is null");
@@ -59,7 +59,11 @@ namespace DevKid.src.Application.Service
                 {
                     throw new Exception("Order not created");
                 }
-                return response.checkoutUrl;
+                return new GeneratePaymentUrlResponse
+                {
+                    PaymentLink = response.checkoutUrl,
+                    QrCode = response.qrCode
+                };
             }
 
             public bool ValidateSignature(PayOSWebhookModel webhookData)

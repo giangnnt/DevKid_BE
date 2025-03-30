@@ -3,6 +3,11 @@ using DevKid.src.Application.Dto;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
+using System.Security.Principal;
 using static DevKid.src.Domain.Entities.Material;
 
 namespace DevKid.src.Application.Service
@@ -10,13 +15,18 @@ namespace DevKid.src.Application.Service
     public interface IMediaService
     {
         Task<ResponseDto> UploadMedia(IFormFile file, string type);
+        Task<ResponseDto> UploadVideo(IFormFile file, Guid lessonId);
     }
     public class MediaService : IMediaService
     {
         private readonly IGCService _gcService;
-        public MediaService(IGCService gcService)
+        private readonly ILessonRepo _lessonRepo;
+        private readonly IMaterialRepo _materialRepo;
+        public MediaService(IGCService gcService, ILessonRepo lessonRepo, IMaterialRepo materialRepo)
         {
             _gcService = gcService;
+            _lessonRepo = lessonRepo;
+            _materialRepo = materialRepo;
         }
 
         public async Task<ResponseDto> UploadMedia(IFormFile file, string type)
@@ -40,21 +50,6 @@ namespace DevKid.src.Application.Service
                         return result;
                     }
                     if (file.Length > FileConst.MAX_IMAGE_SIZE)
-                    {
-                        result.IsSuccess = false;
-                        result.Message = "File is too large";
-                        return result;
-                    }
-                }
-                else if (type.Equals(FileConst.VIDEO.ToString(), StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!contentType.Contains("video"))
-                    {
-                        result.IsSuccess = false;
-                        result.Message = "File is not video";
-                        return result;
-                    }
-                    if (file.Length > FileConst.MAX_VIDEO_SIZE)
                     {
                         result.IsSuccess = false;
                         result.Message = "File is too large";
@@ -108,5 +103,119 @@ namespace DevKid.src.Application.Service
                 return result;
             }
         }
+
+        public async Task<ResponseDto> UploadVideo(IFormFile file, Guid lessonId)
+        {
+            var result = new ResponseDto();
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "File is null";
+                    return result;
+                }
+                var contentType = file.ContentType;
+                if (Array.Exists(FileConst.VIDEO_CONTENT_TYPES, ct => ct.Equals(contentType, StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (!contentType.Contains("video"))
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "File is not video";
+                        return result;
+                    }
+                    if (file.Length > FileConst.MAX_VIDEO_SIZE)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "File is too large";
+                        return result;
+                    }
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Type is not valid";
+                    return result;
+                }
+
+                var lesson = await _lessonRepo.GetLessonById(lessonId);
+                var dirPath = Path.Combine(FileConst.uploadPath, lessonId.ToString());
+                if (!Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+                var filePath = Path.Combine(dirPath, file.FileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+                // dirPath = /upload/lessonId
+                // chunkFolder = /upload/lessonId/fileName
+                // chunkPath = /upload/lessonId/fileName/filename.mpd
+                var chunkFolder = Path.Combine(dirPath, Path.GetFileNameWithoutExtension(file.FileName));
+                var chunkPath = Path.Combine(chunkFolder, $"{Path.GetFileNameWithoutExtension(file.FileName)}.mpd");
+                if (!Directory.Exists(chunkFolder))
+                {
+                    Directory.CreateDirectory(chunkFolder);
+                }
+                var ffmpegAgrs = $"-i {filePath} -c:v libx264 -crf 23 -c:a aac -b:a 128k -f dash -seg_duration 5 -init_seg_name init-stream$RepresentationID$.m4s -media_seg_name chunk-stream$RepresentationID$-$Number%05d$.m4s {chunkPath}";
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = FileConst.ffmpegPath,
+                        Arguments = ffmpegAgrs,
+                        WorkingDirectory = chunkFolder,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                using (process)
+                {
+                    process.Start();
+                    Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
+                    Task<string> errorTask = process.StandardError.ReadToEndAsync();
+                    await process.WaitForExitAsync();
+                }
+                // delete original file
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    Console.WriteLine("Deleted");
+                }
+                else
+                {
+                    Console.WriteLine("Not exist file");
+                }
+                var response = await _materialRepo.AddMaterial(new Material
+                {
+                    Name = file.FileName,
+                    Type = MaterialType.Video,
+                    Url = chunkPath,
+                    LessonId = lessonId
+                });
+                if (!response)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Upload failed";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = true;
+                    result.Message = "Upload and chunk successfully";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+
     }
 }

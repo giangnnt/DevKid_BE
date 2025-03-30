@@ -26,7 +26,9 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5173",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "UPLOAD_PATH": "C:\\Users\\GIANG\\Videos\\Upload",
+        "FFMPEG_PATH": "C:\\Users\\GIANG\\Documents\\ffmpeg\\ffmpeg-2025-03-27-git-114fccc4a5-full_build\\bin\\ffmpeg.exe"
       }
     },
     "IIS Express": {

@@ -53,7 +53,20 @@ namespace DevKid.src.Application.Controller
                 return BadRequest(response);
             }
         }
-
+        [HttpPost("{lessonId}/upload-video")]
+        [RequestSizeLimit(500000000)]
+        public async Task<IActionResult> UploadVideo(IFormFile file, Guid lessonId)
+        {
+            var response = await _mediaService.UploadVideo(file, lessonId);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
         //// GET: api/Materials
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<Material>>> GetMaterials()

@@ -9,6 +9,7 @@ using StackExchange.Redis;
 using DevKid.src.Application.Core;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 // Create a logger
@@ -125,6 +126,11 @@ builder.Services.AddSwaggerGen(c =>
           new string[] {}
       }
     });
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 500000000;
 });
 
 builder.Services.AddEndpointsApiExplorer();

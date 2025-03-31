@@ -66,7 +66,7 @@ namespace DevKid.src.Application.Controller
             var response = new ResponseDto();
             try
             {
-                var payload = HttpContext.Items["payload"] as Payload ;
+                var payload = HttpContext.Items["payload"] as Payload;
                 if (payload == null)
                 {
                     response.Message = "Unauthorized";
@@ -79,7 +79,7 @@ namespace DevKid.src.Application.Controller
                     // only admin and manager can access chapter detail without buying
                     if (payload.RoleId != RoleConst.ADMIN_ID && payload.RoleId != RoleConst.MANAGER_ID)
                     {
-                        if(!await _boughtCertificateService.CheckCertificateAsync(chapter.Id, payload.UserId))
+                        if (!await _boughtCertificateService.CheckCertificateAsync(chapter.Id, payload.UserId))
                         {
                             response.Message = "Unauthorized";
                             response.IsSuccess = false;

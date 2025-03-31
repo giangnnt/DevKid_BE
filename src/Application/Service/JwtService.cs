@@ -1,7 +1,6 @@
 ﻿using DevKid.src.Application.Core;
 using DevKid.src.Infrastructure.Cache;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 

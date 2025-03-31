@@ -59,10 +59,10 @@ namespace DevKid.src.Application.Controller
         }
         [Protected]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromQuery]string token)
+        public async Task<IActionResult> Logout([FromQuery] string token)
         {
             try
-            {   
+            {
                 var payload = HttpContext.Items["payload"] as Payload;
                 if (payload is null)
                 {

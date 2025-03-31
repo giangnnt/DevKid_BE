@@ -2,7 +2,6 @@
 using DevKid.src.Domain.IRepository;
 using DevKid.src.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OData.ModelBuilder;
 
 namespace DevKid.src.Infrastructure.Repository
 {

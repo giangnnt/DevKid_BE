@@ -1,8 +1,6 @@
 ﻿using DevKid.src.Application.Constant;
 using DevKid.src.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using static System.Net.WebRequestMethods;
 
 namespace DevKid.src.Infrastructure.Context
 {

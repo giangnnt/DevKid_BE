@@ -1,10 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using DevKid.src.Infrastructure.Context;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.EntityFrameworkCore;
-
-namespace DevKid.src.Domain.Entities
+﻿namespace DevKid.src.Domain.Entities
 {
     public class Material
     {

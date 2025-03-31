@@ -1,9 +1,9 @@
-﻿using DevKid.src.Application.Dto.ResponseDtos;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
-using DevKid.src.Application.Core;
-using DevKid.src.Infrastructure.Cache;
+﻿using DevKid.src.Application.Core;
+using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Domain.IRepository;
+using DevKid.src.Infrastructure.Cache;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace DevKid.src.Application.Middleware
 {

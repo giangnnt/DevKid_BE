@@ -1,6 +1,4 @@
-﻿using DevKid.src.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Query;
-using static DevKid.src.Domain.Entities.Material;
+﻿using static DevKid.src.Domain.Entities.Material;
 
 namespace DevKid.src.Application.Dto
 {

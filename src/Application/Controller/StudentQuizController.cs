@@ -6,9 +6,7 @@ using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Application.Middleware;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace DevKid.src.Application.Controller
 {
@@ -304,7 +302,7 @@ namespace DevKid.src.Application.Controller
             foreach (var dict in dictSample)
             {
                 var listGuidCorrectSample = dict.Value.Where(a => a.IsCorrect == true).Select(a => a.Id).ToList();
-                if(!dictInstance.ContainsKey(dict.Key))
+                if (!dictInstance.ContainsKey(dict.Key))
                 {
                     studentQuizAns.Add(dict.Key, new StudentAns
                     {

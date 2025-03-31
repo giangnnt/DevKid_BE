@@ -38,10 +38,12 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.Payments.ToListAsync();
         }
 
-        public async Task<IEnumerable<Payment>> GetPaymentsByUserId(Guid userId)
+        public async Task<IEnumerable<Payment?>> GetPaymentsByUserId(Guid userId)
         {
-            var orders = await _context.Orders.Where(o => o.StudentId == userId).ToListAsync();
-            var payments = orders.Select(o => o.Payment).Where(p => p != null).Cast<Payment>().ToList();
+            var orders = await _context.Orders.Where(o => o.StudentId == userId)
+                .Include(o => o.Payment)
+                .ToListAsync();
+            var payments = orders.Select(o => o.Payment).ToList();
             return payments;
         }
 

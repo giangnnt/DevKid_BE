@@ -9,6 +9,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> AddPayment(Payment payment);
         Task<bool> UpdatePayment(Payment payment);
         Task<bool> DeletePayment(Guid id);
-        Task<IEnumerable<Payment>> GetPaymentsByUserId(Guid userId);
+        Task<IEnumerable<Payment?>> GetPaymentsByUserId(Guid userId);
     }
 }

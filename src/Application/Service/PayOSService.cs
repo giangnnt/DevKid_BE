@@ -52,7 +52,8 @@ namespace DevKid.src.Application.Service
                     StudentId = user.Id,
                     CourseId = course.Id,
                     Price = course.Price,
-                    Status = Order.StatusEnum.Pending
+                    Status = Order.StatusEnum.Pending,
+                    PaymentUrl = response.checkoutUrl
                 };
                 var result = await _orderRepo.AddOrder(order);
                 if (!result)
@@ -68,7 +69,7 @@ namespace DevKid.src.Application.Service
 
             public bool ValidateSignature(PayOSWebhookModel webhookData)
             {
-                var checksumKey = Environment.GetEnvironmentVariable("CHECKSUM_KEY") ?? throw new Exception("checksum key is null");
+                var checksumKey = _configuration["PayOS:CHECKSUM_KEY"] ?? throw new Exception("checksum key is null");
                 var dataDict = JsonSerializer.Deserialize<Dictionary<string, object>>(JsonSerializer.Serialize(webhookData.Data)) ?? throw new Exception("dataDict is null");
 
                 var sortedData = dataDict.OrderBy(kv => kv.Key)

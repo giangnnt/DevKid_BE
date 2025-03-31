@@ -123,13 +123,13 @@ namespace DevKid.src.Application.Controller
                     response.IsSuccess = false;
                     return Unauthorized(response);
                 }
-                if(await _boughtCertificateService.CheckCertificateAsync(courseId, payload.UserId))
+                var course = await _courseRepo.GetCourseById(courseId);
+                if (await _orderRepo.IsCourseOrderExist(courseId, payload.UserId))
                 {
                     response.Message = "Order for this course already been queue";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
-                var course = await _courseRepo.GetCourseById(courseId);
                 var paymentUrl = await _payOSService.GeneratePaymentUrl(course, payload.UserId);
                 if (paymentUrl != null)
                 {

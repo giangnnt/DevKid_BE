@@ -11,5 +11,6 @@ namespace DevKid.src.Domain.IRepository
         Task<bool> DeleteOrder(long id);
         Task<bool> HaveUserBoughtCourse(Guid courseId, Guid userId);
         Task<IEnumerable<Order>> GetOrdersByUserId(Guid userId);
+        Task<bool> IsCourseOrderExist(Guid courseId, Guid UserId);
     }
 }

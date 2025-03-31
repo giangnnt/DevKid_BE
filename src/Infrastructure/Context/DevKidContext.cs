@@ -2,6 +2,7 @@
 using DevKid.src.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using static System.Net.WebRequestMethods;
 
 namespace DevKid.src.Infrastructure.Context
 {
@@ -135,7 +136,8 @@ namespace DevKid.src.Infrastructure.Context
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.STUDENT_QUIZ_ALL }
                 ));
 
-            modelBuilder.Entity<StudentCourse>().HasKey(sc => new { sc.StudentId, sc.CourseId });
+            modelBuilder.Entity<StudentCourse>()
+                .HasKey(sc => new { sc.StudentId, sc.CourseId });
 
             modelBuilder.Entity<User>().HasData(
                 new User
@@ -157,6 +159,14 @@ namespace DevKid.src.Infrastructure.Context
                 .Property(o => o.Id)
                 .ValueGeneratedNever();
             modelBuilder.Entity<Order>()
+                .Property(o => o.CreateAt)
+                .HasDefaultValueSql("(SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time')");
+            modelBuilder.Entity<Payment>(e =>
+            {
+                e.Property(e => e.CreateAt)
+                    .HasDefaultValueSql("(SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time')");
+            });
+            modelBuilder.Entity<Order>()
                 .Property(o => o.Status)
                 .HasConversion<string>();
             modelBuilder.Entity<Payment>()
@@ -165,6 +175,85 @@ namespace DevKid.src.Infrastructure.Context
             modelBuilder.Entity<StudentQuiz>()
                 .Property(sq => sq.Status)
                 .HasConversion<string>();
+            // seed course and config
+            modelBuilder.Entity<Course>()
+                .Property(c => c.Status)
+                .HasConversion<string>();
+            modelBuilder.Entity<Course>()
+                .HasData(
+                    new Course
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                        Name = "C#",
+                        Description = "C#",
+                        Price = 2000,
+                        ImageUrl = "https://static-00.iconduck.com/assets.00/c-sharp-c-icon-456x512-9sej0lrz.png",
+                        Status = Course.CourseStatus.Active,
+                    },
+                    new Course
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                        Name = "Java",
+                        Description = "Java",
+                        Price = 3000,
+                        ImageUrl = "https://w1.pngwing.com/pngs/800/889/png-transparent-oracle-logo-java-programming-language-javascript-java-development-kit-java-platform-standard-edition-apache-spark-computer-thumbnail.png",
+                        Status = Course.CourseStatus.Active,
+                    }
+                );
+            modelBuilder.Entity<Chapter>()
+                .HasData(
+                    new Chapter
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                        Name = "Chapter 1",
+                        CourseId = Guid.Parse("00000000-0000-0000-0000-000000000001")
+                    },
+                    new Chapter
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                        Name = "Chapter 2",
+                        CourseId = Guid.Parse("00000000-0000-0000-0000-000000000001")
+                    },
+                    new Chapter
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                        Name = "Chapter 1",
+                        CourseId = Guid.Parse("00000000-0000-0000-0000-000000000002")
+                    },
+                    new Chapter
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000004"),
+                        Name = "Chapter 2",
+                        CourseId = Guid.Parse("00000000-0000-0000-0000-000000000002")
+                    }
+                );
+            modelBuilder.Entity<Lesson>()
+                .HasData(
+                    new Lesson
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                        Name = "Lesson 1",
+                        ChapterId = Guid.Parse("00000000-0000-0000-0000-000000000001")
+                    },
+                    new Lesson
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                        Name = "Lesson 2",
+                        ChapterId = Guid.Parse("00000000-0000-0000-0000-000000000001")
+                    },
+                    new Lesson
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                        Name = "Lesson 1",
+                        ChapterId = Guid.Parse("00000000-0000-0000-0000-000000000003")
+                    },
+                    new Lesson
+                    {
+                        Id = Guid.Parse("00000000-0000-0000-0000-000000000004"),
+                        Name = "Lesson 2",
+                        ChapterId = Guid.Parse("00000000-0000-0000-0000-000000000003")
+                    }
+                );
         }
     }
 }

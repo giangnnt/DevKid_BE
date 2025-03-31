@@ -16,6 +16,7 @@ namespace DevKid.src.Application.Dto
         public StatusEnum Status { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime UpdateAt { get; set; }
+        public string? PaymentUrl { get; set; }
     }
     public class OrderCreateDto
     {

@@ -47,6 +47,7 @@ namespace DevKid.src.Infrastructure.Repository
 
         public async Task<bool> UpdatePayment(Payment payment)
         {
+            payment.UpdateAt = DateTime.UtcNow;
             _context.Payments.Update(payment);
             var result = await _context.SaveChangesAsync();
             return result > 0;

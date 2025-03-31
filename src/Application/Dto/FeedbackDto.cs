@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace DevKid.src.Application.Dto
 {

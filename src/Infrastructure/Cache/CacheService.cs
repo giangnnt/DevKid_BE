@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using System.Text.Json;
 using IDatabase = StackExchange.Redis.IDatabase;
 
@@ -55,7 +54,7 @@ namespace DevKid.src.Infrastructure.Cache
         public T? GetWait<T>(string key)
         {
             var value = _database.StringGet($"{_redisKey}:{key}");
-            if(value.IsNullOrEmpty)
+            if (value.IsNullOrEmpty)
             {
                 return default;
             }

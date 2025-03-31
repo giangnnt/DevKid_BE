@@ -1,6 +1,4 @@
-﻿using Microsoft.CodeAnalysis.Scripting;
-
-namespace DevKid.src.Application.Core
+﻿namespace DevKid.src.Application.Core
 {
     public interface ICrypto
     {

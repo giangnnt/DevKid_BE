@@ -1,6 +1,4 @@
-﻿using Microsoft.OData.ModelBuilder;
-using Newtonsoft.Json;
-using NuGet.Protocol;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DevKid.src.Domain.Entities

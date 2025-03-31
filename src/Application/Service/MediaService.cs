@@ -1,9 +1,5 @@
 ﻿using DevKid.src.Application.Constant;
-using DevKid.src.Application.Dto;
 using DevKid.src.Application.Dto.ResponseDtos;
-using DevKid.src.Domain.Entities;
-using DevKid.src.Domain.IRepository;
-using static DevKid.src.Domain.Entities.Material;
 
 namespace DevKid.src.Application.Service
 {

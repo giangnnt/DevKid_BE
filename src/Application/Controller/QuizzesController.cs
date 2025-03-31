@@ -7,7 +7,6 @@ using DevKid.src.Application.Middleware;
 using DevKid.src.Application.Service;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevKid.src.Application.Controller

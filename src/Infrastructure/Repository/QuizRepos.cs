@@ -23,7 +23,7 @@ namespace DevKid.src.Infrastructure.Repository
         //    return quizzes.Select(x => x.Id).ToList();
         //}
 
-        public async Task<bool> CreateQuiz(Quiz quiz) 
+        public async Task<bool> CreateQuiz(Quiz quiz)
         {
 
             _context.Quizzes.Add(quiz);
@@ -39,7 +39,7 @@ namespace DevKid.src.Infrastructure.Repository
         public async Task<Quiz> GetQuizById(Guid id)
         {
             return await _context.Quizzes.FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Quiz not found");
-            
+
         }
 
         public async Task<IEnumerable<Quiz>> GetQuizByLessonId(Guid lessonId)

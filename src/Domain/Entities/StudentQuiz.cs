@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
-using static DevKid.src.Domain.Entities.Quiz;
 
 namespace DevKid.src.Domain.Entities
 {
@@ -21,7 +20,7 @@ namespace DevKid.src.Domain.Entities
         public enum QuizStatus
         {
             Uncompleted,
-            Completed   
+            Completed
         }
         public QuizStatus Status { get; set; } = QuizStatus.Uncompleted;
     }

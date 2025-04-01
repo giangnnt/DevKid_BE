@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DevKid.src.Domain.Entities;
-using DevKid.src.Infrastructure.Context;
-using DevKid.src.Domain.IRepository;
-using AutoMapper;
-using DevKid.src.Application.Dto.ResponseDtos;
-using DevKid.src.Application.Service;
-using DevKid.src.Application.Dto;
-using DevKid.src.Application.Middleware;
-using DevKid.src.Application.Core;
+﻿using AutoMapper;
 using DevKid.src.Application.Constant;
+using DevKid.src.Application.Core;
+using DevKid.src.Application.Dto;
+using DevKid.src.Application.Dto.ResponseDtos;
+using DevKid.src.Application.Middleware;
+using DevKid.src.Application.Service;
+using DevKid.src.Domain.Entities;
+using DevKid.src.Domain.IRepository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DevKid.src.Application.Controller
 {
@@ -123,13 +116,13 @@ namespace DevKid.src.Application.Controller
                     response.IsSuccess = false;
                     return Unauthorized(response);
                 }
-                if(await _boughtCertificateService.CheckCertificateAsync(courseId, payload.UserId))
+                var course = await _courseRepo.GetCourseById(courseId);
+                if (await _orderRepo.IsCourseOrderExist(courseId, payload.UserId))
                 {
                     response.Message = "Order for this course already been queue";
                     response.IsSuccess = false;
                     return BadRequest(response);
                 }
-                var course = await _courseRepo.GetCourseById(courseId);
                 var paymentUrl = await _payOSService.GeneratePaymentUrl(course, payload.UserId);
                 if (paymentUrl != null)
                 {
@@ -166,7 +159,7 @@ namespace DevKid.src.Application.Controller
                 {
                     return BadRequest("Invalid webhook payload");
                 }
-                if(webhookData.Data.OrderCode == 123)
+                if (webhookData.Data.OrderCode == 123)
                 {
                     return Ok(new { success = true });
                 }

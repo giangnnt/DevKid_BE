@@ -1,15 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
-using DevKid.src.Infrastructure.Context;
-using DevKid.src.Domain.IRepository;
-using DevKid.src.Infrastructure.Repository;
+﻿using DevKid.src.Application.Core;
 using DevKid.src.Application.Service;
-using static DevKid.src.Application.Service.IPayOSService;
+using DevKid.src.Domain.IRepository;
 using DevKid.src.Infrastructure.Cache;
-using StackExchange.Redis;
-using DevKid.src.Application.Core;
+using DevKid.src.Infrastructure.Context;
+using DevKid.src.Infrastructure.Repository;
 using Microsoft.AspNetCore.OData;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Http.Features;
+using static DevKid.src.Application.Service.IPayOSService;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 // Create a logger

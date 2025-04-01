@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DevKid.src.Domain.Entities;
-using System.Text.Json.Serialization;
 
 namespace DevKid.src.Application.Dto
 {
@@ -19,7 +18,7 @@ namespace DevKid.src.Application.Dto
         public string Email { get; set; } = null!;
         public int RoleId { get; set; }
         public string Password { get; set; } = null!;
-        public string? AvatarUrl { get; set;}
+        public string? AvatarUrl { get; set; }
     }
     public class UserUpdateDto
     {

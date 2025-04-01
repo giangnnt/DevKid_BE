@@ -11,6 +11,7 @@ namespace DevKid.src.Application.Dto
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public MaterialType Type { get; set; }
         public string? Url { get; set; }
         public Guid LessonId { get; set; }

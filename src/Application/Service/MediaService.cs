@@ -1,5 +1,4 @@
 ﻿using DevKid.src.Application.Constant;
-using DevKid.src.Application.Dto;
 using DevKid.src.Application.Dto.ResponseDtos;
 using DevKid.src.Domain.Entities;
 using DevKid.src.Domain.IRepository;
@@ -137,14 +136,29 @@ namespace DevKid.src.Application.Service
                     result.Message = "Type is not valid";
                     return result;
                 }
-
+                // add new material
+                var material = await _materialRepo.ReturnAddMaterial(new Material
+                {
+                    Name = file.FileName,
+                    Type = MaterialType.Video,
+                    Url = "",
+                    LessonId = lessonId
+                });
+                if (material == null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Upload failed";
+                    return result;
+                }
+                // generate guid file name
+                string guid = material.Id.ToString();
                 var lesson = await _lessonRepo.GetLessonById(lessonId);
                 var dirPath = Path.Combine(FileConst.uploadPath, lessonId.ToString());
                 if (!Directory.Exists(dirPath))
                 {
                     Directory.CreateDirectory(dirPath);
                 }
-                var filePath = Path.Combine(dirPath, file.FileName);
+                var filePath = Path.Combine(dirPath, $"{guid}.mp4");
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
@@ -152,8 +166,8 @@ namespace DevKid.src.Application.Service
                 // dirPath = /upload/lessonId
                 // chunkFolder = /upload/lessonId/fileName
                 // chunkPath = /upload/lessonId/fileName/filename.mpd
-                var chunkFolder = Path.Combine(dirPath, Path.GetFileNameWithoutExtension(file.FileName));
-                var chunkPath = Path.Combine(chunkFolder, $"{Path.GetFileNameWithoutExtension(file.FileName)}.mpd");
+                var chunkFolder = Path.Combine(dirPath, guid);
+                var chunkPath = Path.Combine(chunkFolder, $"{guid}.mpd");
                 if (!Directory.Exists(chunkFolder))
                 {
                     Directory.CreateDirectory(chunkFolder);
@@ -177,6 +191,8 @@ namespace DevKid.src.Application.Service
                     process.Start();
                     Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
                     Task<string> errorTask = process.StandardError.ReadToEndAsync();
+                    Console.WriteLine($"Output:{outputTask}");
+                    Console.WriteLine($"Error: {errorTask}");
                     await process.WaitForExitAsync();
                 }
                 // delete original file
@@ -189,13 +205,9 @@ namespace DevKid.src.Application.Service
                 {
                     Console.WriteLine("Not exist file");
                 }
-                var response = await _materialRepo.AddMaterial(new Material
-                {
-                    Name = file.FileName,
-                    Type = MaterialType.Video,
-                    Url = chunkPath,
-                    LessonId = lessonId
-                });
+                // update material url
+                material.Url = chunkPath;
+                var response = await _materialRepo.UpdateMaterial(material);
                 if (!response)
                 {
                     result.IsSuccess = false;

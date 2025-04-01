@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public long OrderId { get; set; }
-        public Order Order { get; set; } = null!; 
+        public Order Order { get; set; } = null!;
         public int Amount { get; set; }
         public string Currency { get; set; } = null!;
         public string PaymentMethod { set; get; } = null!;

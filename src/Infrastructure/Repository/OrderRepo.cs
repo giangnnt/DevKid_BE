@@ -58,8 +58,14 @@ namespace DevKid.src.Infrastructure.Repository
             return false;
         }
 
+        public Task<bool> IsCourseOrderExist(Guid courseId, Guid UserId)
+        {
+            return _context.Orders.AnyAsync(o => o.CourseId == courseId && o.StudentId == UserId);
+        }
+
         public async Task<bool> UpdateOrder(Order order)
         {
+            order.UpdateAt = DateTime.UtcNow;
             _context.Orders.Update(order);
             var result = await _context.SaveChangesAsync();
             return result > 0;

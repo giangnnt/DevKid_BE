@@ -42,6 +42,13 @@ namespace DevKid.src.Infrastructure.Repository
             return await _context.Materials.Where(x => x.LessonId == lessonId).ToListAsync();
         }
 
+        public async Task<Material> ReturnAddMaterial(Material material)
+        {
+            var entityEntry = await _context.Materials.AddAsync(material);
+            await _context.SaveChangesAsync();
+            return entityEntry.Entity;
+        }
+
         public async Task<bool> UpdateMaterial(Material material)
         {
             _context.Materials.Update(material);

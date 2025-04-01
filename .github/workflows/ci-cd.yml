@@ -62,4 +62,5 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/devkid_api:latest
             cd /etc/docker
+            docker compose down
             docker compose up --build -d

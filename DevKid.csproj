@@ -36,7 +36,6 @@
     <Folder Include="src\Application\Core\" />
     <Folder Include="src\Application\Middleware\" />
     <Folder Include="src\Infrastructure\Cache\" />
-    <Folder Include="src\Infrastructure\Repository\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>

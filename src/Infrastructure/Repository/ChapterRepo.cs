@@ -30,6 +30,8 @@ namespace DevKid.src.Infrastructure.Repository
         {
             return await _context.Chapters
                 .Include(x => x.Lessons)
+                .ThenInclude(x => x.Materials)
+
                 .ToListAsync();
         }
 
@@ -37,6 +39,7 @@ namespace DevKid.src.Infrastructure.Repository
         {
             return await _context.Chapters
                 .Include(x => x.Lessons)
+                .ThenInclude(x => x.Materials)
                 .FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Chapter not found");
         }
 
@@ -44,6 +47,7 @@ namespace DevKid.src.Infrastructure.Repository
         {
             return await _context.Chapters
                 .Include(x => x.Lessons)
+                .ThenInclude(x => x.Materials)
                 .Where(x => x.CourseId == courseId)
                 .ToListAsync();
         }

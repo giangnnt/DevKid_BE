@@ -131,7 +131,8 @@ namespace DevKid.src.Infrastructure.Context
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.PAYMENT_OWN },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_OWN },
                     new { RolesId = 3, PermissionsSlug = PermissionSlug.USER_VIEW_BASIC },
-                    new { RolesId = 3, PermissionsSlug = PermissionSlug.STUDENT_QUIZ_ALL }
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.STUDENT_QUIZ_ALL },
+                    new { RolesId = 3, PermissionsSlug = PermissionSlug.CHAPTER_VIEW }
                 ));
 
             modelBuilder.Entity<StudentCourse>()

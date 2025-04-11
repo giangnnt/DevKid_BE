@@ -15,6 +15,7 @@ namespace DevKid.src.Application.Service
     {
         Task<ResponseDto> UploadMedia(IFormFile file, string type);
         Task<ResponseDto> UploadVideo(IFormFile file, Guid lessonId);
+        Task<ResponseDto> GetMpdFile(Guid materialId);
     }
     public class MediaService : IMediaService
     {
@@ -26,6 +27,21 @@ namespace DevKid.src.Application.Service
             _gcService = gcService;
             _lessonRepo = lessonRepo;
             _materialRepo = materialRepo;
+        }
+
+        public async Task<ResponseDto> GetMpdFile(Guid materialId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.IsSuccess = false;
+                response.Message = e.Message;
+                return response;
+            }
         }
 
         public async Task<ResponseDto> UploadMedia(IFormFile file, string type)
@@ -228,6 +244,7 @@ namespace DevKid.src.Application.Service
                 return result;
             }
         }
+
 
     }
 }

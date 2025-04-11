@@ -44,7 +44,9 @@ namespace DevKid.src.Infrastructure.Repository
 
         public async Task<bool> HaveUserBoughtCourse(Guid courseId, Guid userId)
         {
-            var result = await _context.Orders.FirstOrDefaultAsync(o => o.CourseId == courseId && o.StudentId == userId);
+            var result = await _context.Orders
+                .Include(o => o.Payment)
+                .FirstOrDefaultAsync(o => o.CourseId == courseId && o.StudentId == userId);
             if (result != null)
             {
                 if (result.Payment != null)

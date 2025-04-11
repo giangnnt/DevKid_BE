@@ -87,7 +87,7 @@ namespace DevKid.src.Application.Controller
         // get course for admin and manager
         [Protected]
         [HttpGet("detail")]
-        [Permission(PermissionSlug.COURSE_ALL, PermissionSlug.COURSE_VIEW)]
+        [Permission(PermissionSlug.COURSE_ALL)]
         public async Task<IActionResult> GetCourses()
         {
             var response = new ResponseDto();

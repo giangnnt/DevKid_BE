@@ -13,6 +13,7 @@ namespace DevKid.src.Application.Dto
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public int Price { get; set; }
+        public List<Feedback> Feedbacks { get; set; } = new();
     }
     public class CourseDto
     {
@@ -24,6 +25,7 @@ namespace DevKid.src.Application.Dto
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CourseStatus Status { get; set; }
         public List<ChapterDto> Chapters { get; set; } = new();
+        public List<Feedback> Feedbacks { get; set; } = new();
     }
     public class CourseCreateDto
     {

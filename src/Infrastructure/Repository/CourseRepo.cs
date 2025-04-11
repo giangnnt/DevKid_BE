@@ -32,6 +32,7 @@ namespace DevKid.src.Infrastructure.Repository
                .Include(x => x.Chapters)
                .ThenInclude(x => x.Lessons)
                .ThenInclude(x => x.Materials)
+               .Include(x => x.Feedbacks)
                .ToListAsync();
         }
 
@@ -50,6 +51,7 @@ namespace DevKid.src.Infrastructure.Repository
                 .Include(x => x.Chapters)
                 .ThenInclude(x => x.Lessons)
                 .ThenInclude(x => x.Materials)
+                .Include(x => x.Feedbacks)
                 .FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Course not found");
         }
 

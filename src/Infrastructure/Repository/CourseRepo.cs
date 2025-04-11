@@ -35,7 +35,9 @@ namespace DevKid.src.Infrastructure.Repository
 
         public async Task<IEnumerable<Course>> GetBoughtCourse(Guid userId)
         {
-            var orders = _context.Orders.Where(x => x.StudentId == userId && x.Status == Order.StatusEnum.Completed);
+            var orders = _context.Orders
+                .Include(x => x.Course)
+                .Where(x => x.StudentId == userId && x.Status == Order.StatusEnum.Completed);
             var courses = await orders.Select(x => x.Course).ToListAsync();
             return courses;
         }

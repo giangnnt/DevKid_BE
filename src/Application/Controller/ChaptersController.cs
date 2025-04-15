@@ -250,5 +250,39 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        [Protected]
+        [HttpPost("{courserId}")]
+        [Permission(PermissionSlug.CHAPTER_ALL)]
+        public async Task<IActionResult> AddListChapter([FromBody] List<ChapterCreateDto> chapters, Guid courserId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var result = false;
+                var course = await _courseRepo.GetCourseById(courserId);
+                foreach (var chapter in chapters)
+                {
+                    var mappedChapter = _mapper.Map<Chapter>(chapter);
+                    mappedChapter.Course = course;
+                    result = await _chapterRepo.AddChapter(mappedChapter);
+                    if (!result)
+                    {
+                        response.Message = "Chapter not added";
+                        response.IsSuccess = false;
+                        return BadRequest(response);
+                    }
+                }
+                response.Message = "Chapter added successfully";
+                response.IsSuccess = true;
+                return Created("", response);
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
     }
 }

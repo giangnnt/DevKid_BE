@@ -20,6 +20,12 @@ namespace DevKid.src.Application.Dto
         [Required]
         public Guid CourseId { get; set; }
     }
+    public class ChapterCreateListDto
+    {
+        [Required]
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+    }
     public class ChapterUpdateDto
     {
         public string? Name { get; set; }
@@ -35,6 +41,12 @@ namespace DevKid.src.Application.Dto
                 .ForMember(dest => dest.Id, opts => opts.Ignore())
                 .ForMember(dest => dest.Course, opts => opts.Ignore())
                 .ForMember(dest => dest.Lessons, opts => opts.Ignore())
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<ChapterCreateListDto, Chapter>()
+                .ForMember(dest => dest.Id, opts => opts.Ignore())
+                .ForMember(dest => dest.Course, opts => opts.Ignore())
+                .ForMember(dest => dest.Lessons, opts => opts.Ignore())
+                .ForMember(dest => dest.CourseId, opts => opts.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<ChapterUpdateDto, Chapter>()
                 .ForMember(dest => dest.Id, opts => opts.Ignore())

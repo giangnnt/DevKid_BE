@@ -253,7 +253,7 @@ namespace DevKid.src.Application.Controller
         [Protected]
         [HttpPost("{courserId}")]
         [Permission(PermissionSlug.CHAPTER_ALL)]
-        public async Task<IActionResult> AddListChapter([FromBody] List<ChapterCreateDto> chapters, Guid courserId)
+        public async Task<IActionResult> AddListChapter([FromBody] List<ChapterCreateListDto> chapters, Guid courserId)
         {
             var response = new ResponseDto();
             try

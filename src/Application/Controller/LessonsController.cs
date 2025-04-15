@@ -251,7 +251,7 @@ namespace DevKid.src.Application.Controller
             }
         }
         [Protected]
-        [HttpPost("chapterId")]
+        [HttpPost("chapter/{chapterId}")]
         [Permission(PermissionSlug.LESSON_ALL)]
         public async Task<IActionResult> CreateListLesson([FromBody] List<LessonCreateListDto> lessonCreateDtos, Guid chapterId)
         {

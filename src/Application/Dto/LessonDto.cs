@@ -22,6 +22,12 @@ namespace DevKid.src.Application.Dto
         [Required]
         public Guid ChapterId { get; set; }
     }
+    public class LessonCreateListDto
+    {
+        [Required]
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+    }
     public class LessonUpdateDto
     {
         public string? Name { get; set; }
@@ -38,6 +44,13 @@ namespace DevKid.src.Application.Dto
                 .ForMember(dest => dest.Chapter, opts => opts.Ignore())
                 .ForMember(dest => dest.Materials, opts => opts.Ignore())
                 .ForMember(dest => dest.Comments, opts => opts.Ignore())
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<LessonCreateListDto, Lesson>()
+                .ForMember(dest => dest.Id, opts => opts.Ignore())
+                .ForMember(dest => dest.Chapter, opts => opts.Ignore())
+                .ForMember(dest => dest.Materials, opts => opts.Ignore())
+                .ForMember(dest => dest.Comments, opts => opts.Ignore())
+                .ForMember(dest => dest.ChapterId, opts => opts.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<LessonUpdateDto, Lesson>()
                 .ForMember(dest => dest.Id, opts => opts.Ignore())

@@ -250,5 +250,40 @@ namespace DevKid.src.Application.Controller
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        [Protected]
+        [HttpPost("chapterId")]
+        [Permission(PermissionSlug.LESSON_ALL)]
+        public async Task<IActionResult> CreateListLesson([FromBody] List<LessonCreateListDto> lessonCreateDtos, Guid chapterId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var result = false;
+                var chapter = await _chapterRepo.GetChapterById(chapterId);
+                foreach (var lessonCreateDto in lessonCreateDtos)
+                {
+
+                    var lesson = _mapper.Map<Lesson>(lessonCreateDto);
+                    lesson.ChapterId = chapterId;
+                    result = await _lessonRepo.AddLesson(lesson);
+                    if (!result)
+                    {
+                        response.Message = "Lesson not added";
+                        response.IsSuccess = false;
+                        return BadRequest(response);
+                    }
+                }
+                response.Message = "Lesson added successfully";
+                response.IsSuccess = true;
+                return Created("", response);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
     }
 }

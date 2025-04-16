@@ -40,6 +40,13 @@ namespace DevKid.src.Infrastructure.Repository
         {
             var orders = _context.Orders
                 .Include(x => x.Course)
+                .ThenInclude(x => x.Chapters)
+                .ThenInclude(x => x.Lessons)
+                .ThenInclude(x => x.Materials)
+                .Include(x => x.Course)
+                .ThenInclude(x => x.Chapters)
+                .ThenInclude(x => x.Lessons)
+                .ThenInclude(x => x.Quizzes)
                 .Where(x => x.StudentId == userId && x.Status == Order.StatusEnum.Completed);
             var courses = await orders.Select(x => x.Course).ToListAsync();
             return courses;
